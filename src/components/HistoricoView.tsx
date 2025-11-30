@@ -39,7 +39,7 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
         ) : (
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
             {readings.map((reading) => {
-              const formattedDate = format(new Date(reading.date), "d MMM yyyy", {
+              const formattedDate = format(new Date(reading.date), "d MMM yyyy, HH:mm", {
                 locale: es,
               });
 
