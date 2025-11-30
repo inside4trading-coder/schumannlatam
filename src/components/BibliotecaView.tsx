@@ -10,6 +10,28 @@ export const BibliotecaView = () => {
         <h2 className="text-2xl font-bold text-foreground">Biblioteca de Conocimiento</h2>
       </div>
 
+      {/* Historia */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-primary" />
+            <CardTitle>Historia</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-card-foreground leading-relaxed">
+            La resonancia fue predicha por primera vez por el físico Winfried Otto Schumann en 1952, 
+            y posteriormente fue observada y medida en los años siguientes. Nombrada en su honor, la 
+            resonancia de Schumann se ha convertido desde entonces en un punto de interés no solo para 
+            los científicos, sino también para entusiastas de diversas disciplinas.
+          </p>
+          <p className="text-card-foreground leading-relaxed">
+            Nikola Tesla es considerado influyente en el descubrimiento de las frecuencias de la 
+            resonancia de Schumann.
+          </p>
+        </CardContent>
+      </Card>
+
       {/* ¿Qué es la Resonancia Schumann? */}
       <Card>
         <CardHeader>
@@ -164,28 +186,6 @@ export const BibliotecaView = () => {
               className="w-full rounded-lg border border-border"
             />
           </div>
-        </CardContent>
-      </Card>
-
-      {/* Historia */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-primary" />
-            <CardTitle>Historia</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-card-foreground leading-relaxed">
-            La resonancia fue predicha por primera vez por el físico Winfried Otto Schumann en 1952, 
-            y posteriormente fue observada y medida en los años siguientes. Nombrada en su honor, la 
-            resonancia de Schumann se ha convertido desde entonces en un punto de interés no solo para 
-            los científicos, sino también para entusiastas de diversas disciplinas.
-          </p>
-          <p className="text-card-foreground leading-relaxed">
-            Nikola Tesla es considerado influyente en el descubrimiento de las frecuencias de la 
-            resonancia de Schumann.
-          </p>
         </CardContent>
       </Card>
 
