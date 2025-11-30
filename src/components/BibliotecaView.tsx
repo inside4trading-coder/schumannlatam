@@ -167,6 +167,111 @@ export const BibliotecaView = () => {
         </CardContent>
       </Card>
 
+      {/* Historia */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <BookOpen className="h-5 w-5 text-primary" />
+            <CardTitle>Historia</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-card-foreground leading-relaxed">
+            La resonancia fue predicha por primera vez por el físico Winfried Otto Schumann en 1952, 
+            y posteriormente fue observada y medida en los años siguientes. Nombrada en su honor, la 
+            resonancia de Schumann se ha convertido desde entonces en un punto de interés no solo para 
+            los científicos, sino también para entusiastas de diversas disciplinas.
+          </p>
+          <p className="text-card-foreground leading-relaxed">
+            Nikola Tesla es considerado influyente en el descubrimiento de las frecuencias de la 
+            resonancia de Schumann.
+          </p>
+        </CardContent>
+      </Card>
+
+      {/* Estaciones de monitoreo */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-primary" />
+            <CardTitle>Estaciones de monitoreo</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <ul className="space-y-2 text-card-foreground">
+            <li className="flex items-start gap-2">
+              <span className="text-primary mt-1">•</span>
+              <span>Rhode Island</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-primary mt-1">•</span>
+              <span><strong>Tomsk University Rusia</strong> (Nosotros usamos estos datos)</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-primary mt-1">•</span>
+              <span>MIT</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <span className="text-primary mt-1">•</span>
+              <span>Italy</span>
+            </li>
+          </ul>
+        </CardContent>
+      </Card>
+
+      {/* Cultura popular */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Info className="h-5 w-5 text-primary" />
+            <CardTitle>Cultura popular</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-card-foreground leading-relaxed">
+            A lo largo de los años, la resonancia de Schumann ha sido objeto de numerosas especulaciones, 
+            mitos e interpretaciones, especialmente en el ámbito de la medicina alternativa, comunidades 
+            metafísicas y creencias New Age.
+          </p>
+          
+          <div className="space-y-3 mt-4">
+            <div>
+              <strong className="text-card-foreground">Espiritualidad New Age:</strong>
+              <p className="text-card-foreground leading-relaxed mt-1">
+                Algunos proponentes en la comunidad New Age creen que la resonancia de Schumann está 
+                estrechamente vinculada a la conciencia humana. Sugieren que cambios o alteraciones en 
+                estas frecuencias pueden influir en la salud física, el bienestar mental y el crecimiento 
+                espiritual.
+              </p>
+            </div>
+
+            <div>
+              <strong className="text-card-foreground">Medicina Alternativa:</strong>
+              <p className="text-card-foreground leading-relaxed mt-1">
+                Algunos practicantes de salud alternativa afirman que dispositivos o terapias que imitan 
+                o armonizan con la resonancia de Schumann pueden provocar curación o equilibrio en el cuerpo.
+              </p>
+            </div>
+
+            <div>
+              <strong className="text-card-foreground">Música y Arte:</strong>
+              <p className="text-card-foreground leading-relaxed mt-1">
+                El concepto de que la Tierra tiene un "latido del corazón" ha inspirado a numerosos 
+                artistas, músicos y escritores.
+              </p>
+            </div>
+
+            <div>
+              <strong className="text-card-foreground">Cine y Televisión:</strong>
+              <p className="text-card-foreground leading-relaxed mt-1">
+                La resonancia de Schumann ha sido ocasionalmente un elemento de la trama en géneros de 
+                ciencia ficción y paranormales. Como el icónico anime Serial Experiments Lain.
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
       {/* Limitaciones y disclaimer */}
       <Card className="border-destructive/50 bg-destructive/5">
         <CardHeader>
