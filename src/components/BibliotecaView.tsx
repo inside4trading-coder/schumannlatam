@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { BookOpen, Info, TrendingUp, AlertCircle } from "lucide-react";
+import schumannGraphExample from "@/assets/schumann-graph-example.png";
 
 export const BibliotecaView = () => {
   return (
@@ -19,19 +20,57 @@ export const BibliotecaView = () => {
         </CardHeader>
         <CardContent className="space-y-4">
           <p className="text-card-foreground leading-relaxed">
-            La Resonancia Schumann es un conjunto de picos en la banda de frecuencia extremadamente baja (ELF)
-            del espectro electromagnético de la Tierra. Estas resonancias se producen en la cavidad entre la
-            superficie terrestre y la ionosfera.
+            La resonancia de Schumann es un conjunto de frecuencias electromagnéticas que ocurren naturalmente 
+            en la atmósfera terrestre. Místicamente, a menudo se percibe como el "latido del corazón" de la 
+            Tierra o un reflejo de la conciencia del planeta.
           </p>
-          <p className="text-card-foreground leading-relaxed">
-            La frecuencia fundamental de la Resonancia Schumann es de aproximadamente <strong>7.83 Hz</strong>,
-            aunque puede variar ligeramente. Fue predicha matemáticamente por el físico Winfried Otto Schumann
-            en 1952 y confirmada experimentalmente en los años siguientes.
-          </p>
-          <p className="text-card-foreground leading-relaxed">
-            Esta resonancia es generada y excitada por las descargas de rayos en la atmósfera, que actúan
-            como una fuente de energía electromagnética continua.
-          </p>
+          
+          <div className="space-y-3 mt-4">
+            <div>
+              <strong className="text-card-foreground">Ritmos Naturales:</strong>
+              <p className="text-card-foreground leading-relaxed mt-1">
+                La resonancia de Schumann es una manifestación de los ritmos naturales de la Tierra, muy similar 
+                a las ondas cerebrales en los humanos. Se cree que conecta a todos los seres vivos con el pulso 
+                energético del planeta.
+              </p>
+            </div>
+
+            <div>
+              <strong className="text-card-foreground">Conexión Humana:</strong>
+              <p className="text-card-foreground leading-relaxed mt-1">
+                Los místicos creen que los humanos pueden sintonizar estas frecuencias para el crecimiento 
+                espiritual y la sanación. Se dice que la resonancia influye en la conciencia humana, las 
+                emociones y el bienestar físico, fomentando una conexión más profunda con la Tierra.
+              </p>
+            </div>
+
+            <div>
+              <strong className="text-card-foreground">Equilibrio Armónico:</strong>
+              <p className="text-card-foreground leading-relaxed mt-1">
+                Estas frecuencias se ven como un equilibrio armónico entre la Tierra y la ionosfera. Las 
+                disrupciones en la resonancia podrían reflejar cambios globales o cósmicos, potencialmente 
+                afectando el comportamiento y la conciencia humana.
+              </p>
+            </div>
+
+            <div>
+              <strong className="text-card-foreground">Despertar Espiritual:</strong>
+              <p className="text-card-foreground leading-relaxed mt-1">
+                Algunas tradiciones espirituales sugieren que el aumento de la frecuencia de la resonancia de 
+                Schumann señala un cambio en la conciencia humana, un movimiento hacia una mayor conciencia 
+                espiritual e iluminación.
+              </p>
+            </div>
+
+            <div>
+              <strong className="text-card-foreground">Estados Meditativos:</strong>
+              <p className="text-card-foreground leading-relaxed mt-1">
+                Prácticas como la meditación, el grounding (conexión con la tierra) y la atención plena se 
+                creen que ayudan a los individuos a alinearse con la resonancia de Schumann, promoviendo la 
+                paz interior y una sensación de unidad con la energía de la Tierra.
+              </p>
+            </div>
+          </div>
         </CardContent>
       </Card>
 
@@ -44,20 +83,41 @@ export const BibliotecaView = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-card-foreground leading-relaxed">
-            Algunas personas en el ámbito del bienestar y la medicina alternativa sugieren que la
-            Resonancia Schumann podría estar relacionada con el bienestar humano, ya que su frecuencia
-            fundamental está cerca del rango de las ondas cerebrales alfa (8-12 Hz).
-          </p>
-          <p className="text-card-foreground leading-relaxed">
-            Se han reportado correlaciones entre las variaciones en la actividad de la Resonancia Schumann
-            y diversos aspectos del comportamiento humano, el estado de ánimo y la salud en general.
-          </p>
-          <div className="bg-primary/10 border border-primary/20 rounded-lg p-4">
-            <p className="text-sm text-card-foreground">
-              <strong>Importante:</strong> Es fundamental destacar que estas correlaciones no constituyen
-              evidencia científica definitiva. La comunidad científica mantiene una postura cautelosa respecto
-              a estas afirmaciones, y se necesita más investigación para establecer relaciones causales claras.
+          <div>
+            <h4 className="font-semibold text-card-foreground mb-2">Efectos Ambientales</h4>
+            <p className="text-card-foreground leading-relaxed">
+              El cerebro utiliza un sistema oscilante ELF (Extremely Low Frequency), haciendo uso principalmente 
+              de iones de calcio para controlar neurotransmisores. Las señales ELF externas inducen eflujos de 
+              iones de calcio en neuronas alterados en el tejido cerebral. Los animales y los humanos han 
+              evolucionado en un ambiente saturado por la señal SR durante aproximadamente 3 mil millones de años. 
+              La sincronización estable del cerebro mediante señales SR ha conducido al pensamiento, la emoción, 
+              la memoria y la inteligencia. El cerebro tiene transmisores y receptores electromagnéticos en las 
+              neuronas.
+            </p>
+          </div>
+
+          <div>
+            <h4 className="font-semibold text-card-foreground mb-2">Actividad S/GMA (Solar/Geomagnética)</h4>
+            <p className="text-card-foreground leading-relaxed">
+              La actividad S/GMA ha demostrado afectar la amplitud (fortaleza) de la señal SR, y como sabemos, 
+              el ciclo de resonancia de Schumann afecta a los seres humanos.
+            </p>
+            <p className="text-card-foreground leading-relaxed mt-2">
+              Las correlaciones entre el número de manchas solares y los índices de actividad GMA también 
+              coinciden con ciertos efectos en la salud.
+            </p>
+            <p className="text-card-foreground leading-relaxed mt-2">
+              La radiación de rayos X y rayos gamma de los vientos solares tienen un impacto en la fortaleza 
+              de la señal SR y pueden alterar el ciclo diurno.
+            </p>
+            <p className="text-card-foreground leading-relaxed mt-2">
+              Los rayos X ionizan los átomos con los que entran en contacto e incrementan la concentración de 
+              iones en la región D de la ionosfera. La región D es la parte superior de la cavidad ionosférica 
+              en la cual existe la señal SR.
+            </p>
+            <p className="text-card-foreground leading-relaxed mt-2">
+              La variación diaria en la región D produce la variación en la señal SR. Las tormentas solares 
+              también se sabe que producen variaciones en la señal SR.
             </p>
           </div>
         </CardContent>
@@ -72,28 +132,38 @@ export const BibliotecaView = () => {
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-card-foreground leading-relaxed">
-            Las gráficas de la Resonancia Schumann muestran la intensidad de las señales electromagnéticas
-            a diferentes frecuencias a lo largo del tiempo. A continuación, algunos elementos clave:
-          </p>
-          <ul className="space-y-2 list-disc list-inside text-card-foreground">
+          <ul className="space-y-3 text-card-foreground">
             <li>
-              <strong>Picos de intensidad:</strong> Las líneas más brillantes o intensas indican momentos
-              de mayor actividad electromagnética.
+              <strong>Eje X:</strong> Representa el tiempo, en horas, utilizando la Hora de Verano de Tomsk 
+              (TLVA UTC+7)
             </li>
             <li>
-              <strong>Frecuencias:</strong> El eje vertical generalmente muestra las frecuencias (en Hz),
-              con la fundamental alrededor de 7.83 Hz.
+              <strong>Eje Y:</strong> Representa la frecuencia entre 0 y 40 Hz
             </li>
             <li>
-              <strong>Tiempo:</strong> El eje horizontal representa el tiempo, permitiendo observar
-              variaciones a lo largo del día.
+              <strong>Fecha:</strong> Se muestra una serie de tres fechas horizontalmente en la parte superior 
+              del gráfico en orden de izquierda a derecha.
             </li>
             <li>
-              <strong>Color y densidad:</strong> Los colores más cálidos (rojos, naranjas) suelen indicar
-              mayor intensidad, mientras que los fríos (azules, verdes) indican menor intensidad.
+              <strong>Hora:</strong> Para cada día se muestra una secuencia de 0-24 horas horizontalmente en 
+              la parte inferior del gráfico. La zona horaria corresponde a la ubicación de la estación de 
+              monitoreo, Hora de Verano de Tomsk (TLVA).
+            </li>
+            <li>
+              <strong>Color:</strong> Indica amplitud (fortaleza/intensidad), el negro y azul son los colores 
+              de fondo y luego la escala se mueve desde verde pasando por rojo hasta la amplitud más alta 
+              representada en blanco.
             </li>
           </ul>
+
+          <div className="mt-6">
+            <p className="text-sm text-muted-foreground mb-3">Ejemplo visual de gráfica de Resonancia Schumann:</p>
+            <img 
+              src={schumannGraphExample} 
+              alt="Ejemplo de gráfica de Resonancia Schumann mostrando frecuencias y amplitudes" 
+              className="w-full rounded-lg border border-border"
+            />
+          </div>
         </CardContent>
       </Card>
 
