@@ -2,10 +2,12 @@ import { useSchumannReadings } from "@/hooks/useSchumannReadings";
 import { TodayView } from "@/components/TodayView";
 import { HistoricoView } from "@/components/HistoricoView";
 import { BibliotecaView } from "@/components/BibliotecaView";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle, Radio } from "lucide-react";
+import { AlertCircle } from "lucide-react";
+import schumannLogo from "@/assets/schumann-logo.png";
 
 const Index = () => {
   const { readings, loading, error } = useSchumannReadings();
@@ -15,14 +17,21 @@ const Index = () => {
       {/* Header */}
       <header className="border-b bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/30">
         <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center gap-3">
-            <Radio className="h-8 w-8 text-primary" />
-            <div>
-              <h1 className="text-3xl font-bold text-foreground">Resonancia Schumann</h1>
-              <p className="text-sm text-muted-foreground mt-1">
-                Lecturas diarias orientativas (no médicas)
-              </p>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <img 
+                src={schumannLogo} 
+                alt="Resonancia Schumann Logo" 
+                className="h-12 w-auto object-contain"
+              />
+              <div>
+                <h1 className="text-3xl font-bold text-foreground">Resonancia Schumann</h1>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Lecturas diarias orientativas (no médicas)
+                </p>
+              </div>
             </div>
+            <ThemeToggle />
           </div>
         </div>
       </header>
