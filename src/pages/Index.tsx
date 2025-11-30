@@ -22,7 +22,7 @@ const Index = () => {
               <img 
                 src={schumannLogo} 
                 alt="Resonancia Schumann Logo" 
-                className="h-28 w-auto object-contain"
+                className="h-28 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer"
               />
               <div>
                 <h1 className="text-3xl font-bold text-foreground">Resonancia Schumann</h1>
