@@ -3,12 +3,15 @@ import { SchumannReading } from "@/types/schumann";
 import { BadgeNivelActividad } from "./BadgeNivelActividad";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
-import { format, isToday, isThisWeek, isThisMonth, parseISO } from "date-fns";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Button } from "@/components/ui/button";
+import { format, isSameDay, parseISO } from "date-fns";
 import { es } from "date-fns/locale";
 import { TodayView } from "./TodayView";
-import { Calendar } from "lucide-react";
+import { Calendar, X } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface HistoricoViewProps {
   readings: SchumannReading[];
@@ -16,7 +19,7 @@ interface HistoricoViewProps {
 
 export const HistoricoView = ({ readings }: HistoricoViewProps) => {
   const [selectedReading, setSelectedReading] = useState<SchumannReading | null>(null);
-  const [dateFilter, setDateFilter] = useState<"all" | "today" | "week" | "month">("all");
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [currentPage, setCurrentPage] = useState(1);
   
   const ITEMS_PER_PAGE = 9; // 3 columnas x 3 filas
@@ -28,21 +31,13 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
 
   // Filtrar lecturas por fecha
   const filteredReadings = useMemo(() => {
+    if (!selectedDate) return readings;
+    
     return readings.filter((reading) => {
       const readingDate = parseISO(reading.date);
-      
-      switch (dateFilter) {
-        case "today":
-          return isToday(readingDate);
-        case "week":
-          return isThisWeek(readingDate, { locale: es });
-        case "month":
-          return isThisMonth(readingDate);
-        default:
-          return true;
-      }
+      return isSameDay(readingDate, selectedDate);
     });
-  }, [readings, dateFilter]);
+  }, [readings, selectedDate]);
 
   // Calcular paginación
   const totalPages = Math.ceil(filteredReadings.length / ITEMS_PER_PAGE);
@@ -50,29 +45,72 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedReadings = filteredReadings.slice(startIndex, endIndex);
 
-  // Reset página cuando cambia el filtro
-  const handleFilterChange = (value: string) => {
-    setDateFilter(value as "all" | "today" | "week" | "month");
+  // Reset página cuando cambia la fecha
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date);
+    setCurrentPage(1);
+  };
+
+  const clearDateFilter = () => {
+    setSelectedDate(undefined);
     setCurrentPage(1);
   };
 
   return (
     <>
       <div className="space-y-6 animate-in fade-in-50 duration-500">
-        <div className="flex items-center gap-2 mb-6">
-          <Calendar className="h-6 w-6 text-primary" />
-          <h2 className="text-2xl font-bold text-foreground">Histórico de Lecturas</h2>
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-2">
+            <Calendar className="h-6 w-6 text-primary" />
+            <h2 className="text-2xl font-bold text-foreground">Histórico de Lecturas</h2>
+          </div>
+
+          {/* Selector de fecha */}
+          <div className="flex items-center gap-2">
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  className={cn(
+                    "justify-start text-left font-normal",
+                    !selectedDate && "text-muted-foreground"
+                  )}
+                >
+                  <Calendar className="mr-2 h-4 w-4" />
+                  {selectedDate ? format(selectedDate, "d MMM yyyy", { locale: es }) : "Buscar por fecha"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <CalendarComponent
+                  mode="single"
+                  selected={selectedDate}
+                  onSelect={handleDateSelect}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                  locale={es}
+                />
+              </PopoverContent>
+            </Popover>
+            {selectedDate && (
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={clearDateFilter}
+                className="h-9 w-9"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
         </div>
 
-        {/* Filtros de fecha */}
-        <Tabs value={dateFilter} onValueChange={handleFilterChange} className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="all">Todo</TabsTrigger>
-            <TabsTrigger value="today">Hoy</TabsTrigger>
-            <TabsTrigger value="week">Semana</TabsTrigger>
-            <TabsTrigger value="month">Mes</TabsTrigger>
-          </TabsList>
-        </Tabs>
+        <div className="text-sm text-muted-foreground mb-4">
+          {selectedDate ? (
+            <span>Mostrando lecturas del {format(selectedDate, "d 'de' MMMM 'de' yyyy", { locale: es })}</span>
+          ) : (
+            <span>Mostrando todas las lecturas</span>
+          )}
+        </div>
 
         {filteredReadings.length === 0 ? (
           <Card>
