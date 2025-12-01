@@ -23,7 +23,7 @@ const Index = () => {
               <img 
                 src={schumannLogo} 
                 alt="Resonancia Schumann Logo" 
-                className="h-28 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer"
+                className="h-16 sm:h-24 md:h-28 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer"
               />
               <div>
                 <h1 className="text-3xl font-bold text-foreground">Resonancia Schumann</h1>
@@ -66,17 +66,17 @@ const Index = () => {
           </Card>
         ) : (
           <Tabs defaultValue="hoy" className="space-y-6">
-            <TabsList className="inline-flex h-auto w-full max-w-2xl mx-auto overflow-x-auto overflow-y-hidden p-1 gap-1">
-              <TabsTrigger value="hoy" className="flex-shrink-0 px-3 py-2 text-sm whitespace-nowrap">
+            <TabsList className="inline-flex h-auto w-full max-w-2xl mx-auto overflow-x-auto md:grid md:grid-cols-4 md:overflow-x-visible p-1 gap-1">
+              <TabsTrigger value="hoy" className="flex-shrink-0 md:flex-shrink px-3 py-2 text-sm whitespace-nowrap">
                 Hoy
               </TabsTrigger>
-              <TabsTrigger value="historico" className="flex-shrink-0 px-3 py-2 text-sm whitespace-nowrap">
+              <TabsTrigger value="historico" className="flex-shrink-0 md:flex-shrink px-3 py-2 text-sm whitespace-nowrap">
                 Histórico
               </TabsTrigger>
-              <TabsTrigger value="biblioteca" className="flex-shrink-0 px-3 py-2 text-sm whitespace-nowrap">
+              <TabsTrigger value="biblioteca" className="flex-shrink-0 md:flex-shrink px-3 py-2 text-sm whitespace-nowrap">
                 Biblioteca
               </TabsTrigger>
-              <TabsTrigger value="agradecimientos" className="flex-shrink-0 px-3 py-2 text-sm whitespace-nowrap">
+              <TabsTrigger value="agradecimientos" className="flex-shrink-0 md:flex-shrink px-3 py-2 text-sm whitespace-nowrap">
                 Agradecimientos
               </TabsTrigger>
             </TabsList>
