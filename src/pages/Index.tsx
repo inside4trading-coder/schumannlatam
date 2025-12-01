@@ -2,6 +2,7 @@ import { useSchumannReadings } from "@/hooks/useSchumannReadings";
 import { TodayView } from "@/components/TodayView";
 import { HistoricoView } from "@/components/HistoricoView";
 import { BibliotecaView } from "@/components/BibliotecaView";
+import { AgradecimientosView } from "@/components/AgradecimientosView";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
@@ -65,10 +66,11 @@ const Index = () => {
           </Card>
         ) : (
           <Tabs defaultValue="hoy" className="space-y-6">
-            <TabsList className="grid w-full max-w-md mx-auto grid-cols-3">
+            <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-4">
               <TabsTrigger value="hoy">Hoy</TabsTrigger>
               <TabsTrigger value="historico">Histórico</TabsTrigger>
               <TabsTrigger value="biblioteca">Biblioteca</TabsTrigger>
+              <TabsTrigger value="agradecimientos">Agradecimientos</TabsTrigger>
             </TabsList>
 
             <TabsContent value="hoy" className="space-y-4">
@@ -81,6 +83,10 @@ const Index = () => {
 
             <TabsContent value="biblioteca" className="space-y-4">
               <BibliotecaView />
+            </TabsContent>
+
+            <TabsContent value="agradecimientos" className="space-y-4">
+              <AgradecimientosView />
             </TabsContent>
           </Tabs>
         )}
