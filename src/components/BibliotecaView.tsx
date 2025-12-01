@@ -46,6 +46,14 @@ export const BibliotecaView = () => {
             en la atmósfera terrestre. Místicamente, a menudo se percibe como el "latido del corazón" de la 
             Tierra o un reflejo de la conciencia del planeta.
           </p>
+
+          <p className="text-card-foreground leading-relaxed mt-4">
+            La frecuencia fundamental de la resonancia de Schumann es aproximadamente <strong>7.83 Hz</strong>. 
+            (La Tierra básicamente vibra a esta frecuencia) y tiene varias frecuencias armónicas adicionales que 
+            incluyen <strong>14.07 Hz</strong>, <strong>20.25 Hz</strong>, <strong>26.41 Hz</strong> y{" "}
+            <strong>32.45 Hz</strong>. Estas frecuencias coinciden en parte con las frecuencias cerebrales 
+            humanas, como las ondas alfa y theta, relacionadas con estados de relajación, meditación y sueño ligero.
+          </p>
           
           <div className="space-y-3 mt-4">
             <div>
@@ -92,6 +100,90 @@ export const BibliotecaView = () => {
                 paz interior y una sensación de unidad con la energía de la Tierra.
               </p>
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Frecuencias de resonancia de Schumann y frecuencias cerebrales humanas */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <TrendingUp className="h-5 w-5 text-primary" />
+            <CardTitle>Frecuencias de resonancia de Schumann y frecuencias cerebrales humanas</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <p className="text-card-foreground leading-relaxed">
+            Las ondas cerebrales se han clasificado en rangos de frecuencia distintos, generalmente asociados 
+            con diferentes regiones cerebrales y estados de conciencia. Los diferentes tipos de ondas cerebrales 
+            son los siguientes:
+          </p>
+
+          <div className="space-y-3 mt-4">
+            <div>
+              <strong className="text-card-foreground">Ondas delta (0-4 Hz)</strong>
+              <p className="text-card-foreground leading-relaxed mt-1">
+                Se asocian con sueño muy profundo, la mente subconsciente, emociones y el sistema endocrino.
+              </p>
+            </div>
+
+            <div>
+              <strong className="text-card-foreground">Ondas theta (4-8 Hz)</strong>
+              <p className="text-card-foreground leading-relaxed mt-1">
+                Se asocian con sueño REM, relajación profunda, estados creativos de la mente y aprendizaje.
+              </p>
+            </div>
+
+            <div>
+              <strong className="text-card-foreground">Ondas alfa (8-12 Hz)</strong>
+              <p className="text-card-foreground leading-relaxed mt-1">
+                Se asocian con relajación con ojos cerrados, estados mentales calmados, flujo enfocado, 
+                reflexión y visualización.
+              </p>
+            </div>
+
+            <div>
+              <strong className="text-card-foreground">Ondas beta (12-30 Hz)</strong>
+              <p className="text-card-foreground leading-relaxed mt-1">
+                Se asocian con conciencia despierta, alerta, concentración y estados mentales enfocados.
+              </p>
+            </div>
+
+            <div>
+              <strong className="text-card-foreground">Ondas gamma (30+ Hz)</strong>
+              <p className="text-card-foreground leading-relaxed mt-1">
+                Se asocian con conciencia superior, resolución de problemas, estados altamente creativos y 
+                meditativos, sincronización generalizada de ondas cerebrales, ideación e insights.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6 bg-muted/50 rounded-lg p-4 border border-border">
+            <p className="text-card-foreground leading-relaxed font-semibold mb-3">
+              Si superpones las resonancias de Schumann sobre las ondas cerebrales humanas, obtienes lo siguiente:
+            </p>
+            <ul className="space-y-2 text-card-foreground">
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-1">•</span>
+                <span><strong>7.8 Hz</strong> frecuencia Schumann (ondas cerebrales theta superior y alfa inferior)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-1">•</span>
+                <span><strong>14 Hz</strong> frecuencia Schumann (ondas cerebrales beta bajas)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-1">•</span>
+                <span><strong>20 Hz</strong> frecuencia Schumann (ondas cerebrales beta medias)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-1">•</span>
+                <span><strong>25 Hz</strong> frecuencia Schumann (ondas cerebrales beta superiores)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-primary mt-1">•</span>
+                <span><strong>33 Hz y superiores</strong> frecuencia Schumann (ondas cerebrales gamma)</span>
+              </li>
+            </ul>
           </div>
         </CardContent>
       </Card>
