@@ -4,16 +4,16 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { Activity, Brain, Heart, Lightbulb } from "lucide-react";
-
 interface TodayViewProps {
   reading: SchumannReading;
 }
-
-export const TodayView = ({ reading }: TodayViewProps) => {
-  const formattedDate = format(new Date(reading.date), "d MMM yyyy", { locale: es });
-
-  return (
-    <div className="space-y-6 animate-in fade-in-50 duration-500">
+export const TodayView = ({
+  reading
+}: TodayViewProps) => {
+  const formattedDate = format(new Date(reading.date), "d MMM yyyy", {
+    locale: es
+  });
+  return <div className="space-y-6 animate-in fade-in-50 duration-500">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -24,25 +24,18 @@ export const TodayView = ({ reading }: TodayViewProps) => {
       </div>
 
       {/* Imagen */}
-      {reading.urlImagen && (
-        <Card className="overflow-hidden border-2">
+      {reading.urlImagen && <Card className="overflow-hidden border-2">
           <CardContent className="p-4">
-            <img
-              src={reading.urlImagen}
-              alt={`Resonancia Schumann - ${reading.date}`}
-              className="w-full max-h-80 object-contain rounded-xl"
-            />
+            <img src={reading.urlImagen} alt={`Resonancia Schumann - ${reading.date}`} className="w-full max-h-80 object-contain rounded-xl" />
           </CardContent>
-        </Card>
-      )}
+        </Card>}
 
       {/* Descripción Técnica */}
-      {reading.descripcionTecnica && (
-        <Card>
+      {reading.descripcionTecnica && <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
               <Activity className="h-5 w-5 text-primary" />
-              <CardTitle>Descripción Técnica</CardTitle>
+              <CardTitle>Descripción técnica</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -50,16 +43,14 @@ export const TodayView = ({ reading }: TodayViewProps) => {
               {reading.descripcionTecnica}
             </p>
           </CardContent>
-        </Card>
-      )}
+        </Card>}
 
       {/* Sensaciones Físicas */}
-      {reading.sensacionesFisicas && (
-        <Card>
+      {reading.sensacionesFisicas && <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
               <Heart className="h-5 w-5 text-primary" />
-              <CardTitle>Sensaciones Físicas</CardTitle>
+              <CardTitle>Sensaciones físicas</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -67,16 +58,14 @@ export const TodayView = ({ reading }: TodayViewProps) => {
               {reading.sensacionesFisicas}
             </p>
           </CardContent>
-        </Card>
-      )}
+        </Card>}
 
       {/* Sensaciones Emocionales */}
-      {reading.sensacionesEmocionales && (
-        <Card>
+      {reading.sensacionesEmocionales && <Card>
           <CardHeader>
             <div className="flex items-center gap-2">
               <Brain className="h-5 w-5 text-primary" />
-              <CardTitle>Sensaciones Emocionales</CardTitle>
+              <CardTitle>Sensaciones emocionales</CardTitle>
             </div>
           </CardHeader>
           <CardContent>
@@ -84,12 +73,10 @@ export const TodayView = ({ reading }: TodayViewProps) => {
               {reading.sensacionesEmocionales}
             </p>
           </CardContent>
-        </Card>
-      )}
+        </Card>}
 
       {/* Recomendaciones */}
-      {reading.recomendaciones && (
-        <Card className="border-primary/20 bg-primary/5">
+      {reading.recomendaciones && <Card className="border-primary/20 bg-primary/5">
           <CardHeader>
             <div className="flex items-center gap-2">
               <Lightbulb className="h-5 w-5 text-primary" />
@@ -101,8 +88,7 @@ export const TodayView = ({ reading }: TodayViewProps) => {
               {reading.recomendaciones}
             </p>
           </CardContent>
-        </Card>
-      )}
+        </Card>}
 
       {/* Disclaimer */}
       <Card className="bg-muted/50 border-muted">
@@ -112,6 +98,5 @@ export const TodayView = ({ reading }: TodayViewProps) => {
           </p>
         </CardContent>
       </Card>
-    </div>
-  );
+    </div>;
 };
