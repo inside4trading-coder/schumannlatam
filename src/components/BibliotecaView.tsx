@@ -1,5 +1,5 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BookOpen, Info, TrendingUp, AlertCircle } from "lucide-react";
+import { BookOpen, Info, TrendingUp, AlertCircle, Heart, ExternalLink } from "lucide-react";
 import schumannGraphExample from "@/assets/schumann-graph-example.png";
 
 export const BibliotecaView = () => {
@@ -268,6 +268,73 @@ export const BibliotecaView = () => {
                 ciencia ficción y paranormales. Como el icónico anime Serial Experiments Lain.
               </p>
             </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Agradecimientos */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <Heart className="h-5 w-5 text-primary" />
+            <CardTitle>Agradecimientos</CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div>
+            <h4 className="font-semibold text-card-foreground mb-3 flex items-center gap-2">
+              <Heart className="h-4 w-4 text-primary" />
+              Nuestros creadores
+            </h4>
+            <div className="space-y-4 text-card-foreground leading-relaxed">
+              <p>
+                El agradecimiento es a esos niños de las estrellas, que vinieron en oleadas desde los 80s 
+                para elevar la frecuencia del planeta con un solo ingrediente, el amor.
+              </p>
+              <p>
+                A todas esas almas que vinieron de manera voluntaria a este momento de la historia, que no 
+                siguieron un camino prediseñado y construyeron su propia camino.
+              </p>
+              <p>
+                Los niños de las estrellas están aquí y vienen con un propósito, recordar el libre albedrío 
+                de elegir.
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-3 pt-4 border-t border-border">
+            <div className="flex items-start gap-2">
+              <a 
+                href="https://musacreativo.com/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary hover:text-primary/80 transition-colors flex items-center gap-2 group"
+              >
+                <ExternalLink className="h-5 w-5 group-hover:scale-110 transition-transform" />
+                <span className="text-card-foreground">
+                  Gracias a <strong>Musa Automation</strong> por la colaboración en construir la primera 
+                  comunidad de información acerca de la resonancia de schumann en habla hispana.
+                </span>
+              </a>
+            </div>
+            
+            <p className="text-card-foreground">
+              Gracias a{" "}
+              <a 
+                href="https://en.tsu.ru/" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-primary hover:underline"
+              >
+                Tomsk University
+              </a>
+              {" "}por monitorear estos datos y compartirlos.
+            </p>
+            
+            <p className="text-card-foreground">
+              Gracias al sistema de observación espacial 70 de Rusia que también hace posible que estos 
+              datos sean públicos.
+            </p>
           </div>
         </CardContent>
       </Card>
