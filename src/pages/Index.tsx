@@ -66,11 +66,19 @@ const Index = () => {
           </Card>
         ) : (
           <Tabs defaultValue="hoy" className="space-y-6">
-            <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-2 md:grid-cols-4 gap-1">
-              <TabsTrigger value="hoy" className="text-xs sm:text-sm">Hoy</TabsTrigger>
-              <TabsTrigger value="historico" className="text-xs sm:text-sm">Histórico</TabsTrigger>
-              <TabsTrigger value="biblioteca" className="text-xs sm:text-sm">Biblioteca</TabsTrigger>
-              <TabsTrigger value="agradecimientos" className="text-xs sm:text-sm">Agradecimientos</TabsTrigger>
+            <TabsList className="inline-flex h-auto w-full max-w-2xl mx-auto overflow-x-auto overflow-y-hidden p-1 gap-1">
+              <TabsTrigger value="hoy" className="flex-shrink-0 px-3 py-2 text-sm whitespace-nowrap">
+                Hoy
+              </TabsTrigger>
+              <TabsTrigger value="historico" className="flex-shrink-0 px-3 py-2 text-sm whitespace-nowrap">
+                Histórico
+              </TabsTrigger>
+              <TabsTrigger value="biblioteca" className="flex-shrink-0 px-3 py-2 text-sm whitespace-nowrap">
+                Biblioteca
+              </TabsTrigger>
+              <TabsTrigger value="agradecimientos" className="flex-shrink-0 px-3 py-2 text-sm whitespace-nowrap">
+                Agradecimientos
+              </TabsTrigger>
             </TabsList>
 
             <TabsContent value="hoy" className="space-y-4">
