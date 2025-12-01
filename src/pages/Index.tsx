@@ -66,11 +66,11 @@ const Index = () => {
           </Card>
         ) : (
           <Tabs defaultValue="hoy" className="space-y-6">
-            <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-4">
-              <TabsTrigger value="hoy">Hoy</TabsTrigger>
-              <TabsTrigger value="historico">Histórico</TabsTrigger>
-              <TabsTrigger value="biblioteca">Biblioteca</TabsTrigger>
-              <TabsTrigger value="agradecimientos">Agradecimientos</TabsTrigger>
+            <TabsList className="grid w-full max-w-2xl mx-auto grid-cols-2 md:grid-cols-4 gap-1">
+              <TabsTrigger value="hoy" className="text-xs sm:text-sm">Hoy</TabsTrigger>
+              <TabsTrigger value="historico" className="text-xs sm:text-sm">Histórico</TabsTrigger>
+              <TabsTrigger value="biblioteca" className="text-xs sm:text-sm">Biblioteca</TabsTrigger>
+              <TabsTrigger value="agradecimientos" className="text-xs sm:text-sm">Agradecimientos</TabsTrigger>
             </TabsList>
 
             <TabsContent value="hoy" className="space-y-4">
