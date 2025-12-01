@@ -22,8 +22,21 @@ export const AgradecimientosView = () => {
           </p>
           <p className="text-card-foreground leading-relaxed">A todas esas almas que vinieron de manera voluntaria a este momento de la historia, que no siguieron un camino prediseñado y construyeron su propio camino.</p>
           <p className="text-card-foreground leading-relaxed">Los niños de las estrellas están aquí y vienen con un propósito, recordar el libre albedrío de elegir.
-
         </p>
+
+          <div className="mt-6 rounded-lg overflow-hidden">
+            <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+              <iframe 
+                className="absolute top-0 left-0 w-full h-full"
+                src="https://www.youtube.com/embed/XpdpW0z9xnQ?si=ZkF3GgNfCJEp87iC" 
+                title="YouTube video player" 
+                frameBorder="0" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                referrerPolicy="strict-origin-when-cross-origin" 
+                allowFullScreen
+              />
+            </div>
+          </div>
 
           <div className="space-y-4 pt-6 border-t border-border">
             <div className="flex items-start gap-3">
