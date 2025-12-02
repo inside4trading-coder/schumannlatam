@@ -1,10 +1,15 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Heart, ExternalLink } from "lucide-react";
+import { useLanguage } from "@/i18n/LanguageContext";
+
 export const AgradecimientosView = () => {
-  return <div className="space-y-6 animate-in fade-in-50 duration-500">
+  const { t } = useLanguage();
+
+  return (
+    <div className="space-y-6 animate-in fade-in-50 duration-500">
       <div className="flex items-center gap-2 mb-6">
         <Heart className="h-6 w-6 text-primary" />
-        <h2 className="text-2xl font-bold text-foreground">Agradecimientos</h2>
+        <h2 className="text-2xl font-bold text-foreground">{t.acknowledgements.title}</h2>
       </div>
 
       {/* Nuestros creadores */}
@@ -12,27 +17,23 @@ export const AgradecimientosView = () => {
         <CardHeader>
           <div className="flex items-center gap-2">
             <Heart className="h-5 w-5 text-primary" />
-            <CardTitle>Nuestros creadores</CardTitle>
+            <CardTitle>{t.acknowledgements.creators.title}</CardTitle>
           </div>
         </CardHeader>
         <CardContent className="space-y-4">
-          <p className="text-card-foreground leading-relaxed">
-            El agradecimiento es a esos niños de las estrellas, que vinieron en oleadas desde los 80s 
-            para elevar la frecuencia del planeta con un solo ingrediente, el amor.
-          </p>
-          <p className="text-card-foreground leading-relaxed">A todas esas almas que vinieron de manera voluntaria a este momento de la historia, que no siguieron un camino prediseñado y construyeron su propio camino.</p>
-          <p className="text-card-foreground leading-relaxed">Los niños de las estrellas están aquí y vienen con un propósito, recordar el libre albedrío de elegir.
-        </p>
+          <p className="text-card-foreground leading-relaxed">{t.acknowledgements.creators.p1}</p>
+          <p className="text-card-foreground leading-relaxed">{t.acknowledgements.creators.p2}</p>
+          <p className="text-card-foreground leading-relaxed">{t.acknowledgements.creators.p3}</p>
 
           <div className="mt-6 rounded-lg overflow-hidden">
-            <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-              <iframe 
+            <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
+              <iframe
                 className="absolute top-0 left-0 w-full h-full"
-                src="https://www.youtube.com/embed/XpdpW0z9xnQ?si=ZkF3GgNfCJEp87iC" 
-                title="YouTube video player" 
-                frameBorder="0" 
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
-                referrerPolicy="strict-origin-when-cross-origin" 
+                src="https://www.youtube.com/embed/XpdpW0z9xnQ?si=ZkF3GgNfCJEp87iC"
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                referrerPolicy="strict-origin-when-cross-origin"
                 allowFullScreen
               />
             </div>
@@ -42,38 +43,53 @@ export const AgradecimientosView = () => {
             <div className="flex items-start gap-3">
               <ExternalLink className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
               <p className="text-card-foreground leading-relaxed">
-                Gracias a{" "}
-                <a href="https://musacreativo.com/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-semibold transition-colors">
+                {t.acknowledgements.thanks.thanksTo}{" "}
+                <a
+                  href="https://musacreativo.com/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline font-semibold transition-colors"
+                >
                   Musa Automation
-                </a>
-                {" "}por la colaboración en construir la primera comunidad de información acerca de la 
-                resonancia de schumann en habla hispana.
+                </a>{" "}
+                {t.acknowledgements.thanks.musa}
               </p>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <ExternalLink className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
               <p className="text-card-foreground leading-relaxed">
-                Gracias a{" "}
-                <a href="https://en.tsu.ru/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-semibold transition-colors">
+                {t.acknowledgements.thanks.thanksTo}{" "}
+                <a
+                  href="https://en.tsu.ru/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline font-semibold transition-colors"
+                >
                   Tomsk University
-                </a>
-                {" "}por monitorear estos datos y compartirlos.
+                </a>{" "}
+                {t.acknowledgements.thanks.tomsk}
               </p>
             </div>
-            
+
             <div className="flex items-start gap-3">
               <ExternalLink className="h-5 w-5 text-primary mt-0.5 flex-shrink-0" />
               <p className="text-card-foreground leading-relaxed">
-                Gracias al{" "}
-                <a href="https://sos70.ru/" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline font-semibold transition-colors">
-                  sistema de observación espacial 70 de Rusia
-                </a>
-                {" "}que también hace posible que estos datos sean públicos.
+                {t.acknowledgements.thanks.thanksToThe}{" "}
+                <a
+                  href="https://sos70.ru/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-primary hover:underline font-semibold transition-colors"
+                >
+                  Russian Space Observation System 70
+                </a>{" "}
+                {t.acknowledgements.thanks.sos70}
               </p>
             </div>
           </div>
         </CardContent>
       </Card>
-    </div>;
+    </div>
+  );
 };

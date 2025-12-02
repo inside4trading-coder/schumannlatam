@@ -8,10 +8,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { format, isSameDay, parseISO } from "date-fns";
-import { es } from "date-fns/locale";
+import { es, enUS } from "date-fns/locale";
 import { TodayView } from "./TodayView";
 import { Calendar, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useLanguage } from "@/i18n/LanguageContext";
 
 interface HistoricoViewProps {
   readings: SchumannReading[];
@@ -21,15 +22,16 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
   const [selectedReading, setSelectedReading] = useState<SchumannReading | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [currentPage, setCurrentPage] = useState(1);
+  const { language, t } = useLanguage();
+  const dateLocale = language === "es" ? es : enUS;
   
-  const ITEMS_PER_PAGE = 9; // 3 columnas x 3 filas
+  const ITEMS_PER_PAGE = 9;
 
   const truncateText = (text: string, maxLength: number = 140) => {
     if (!text || text.length <= maxLength) return text;
     return text.substring(0, maxLength) + "...";
   };
 
-  // Filtrar lecturas por fecha
   const filteredReadings = useMemo(() => {
     if (!selectedDate) return readings;
     
@@ -39,13 +41,11 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
     });
   }, [readings, selectedDate]);
 
-  // Calcular paginación
   const totalPages = Math.ceil(filteredReadings.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedReadings = filteredReadings.slice(startIndex, endIndex);
 
-  // Reset página cuando cambia la fecha
   const handleDateSelect = (date: Date | undefined) => {
     setSelectedDate(date);
     setCurrentPage(1);
@@ -62,10 +62,9 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <Calendar className="h-6 w-6 text-primary" />
-            <h2 className="text-2xl font-bold text-foreground">Histórico de Lecturas</h2>
+            <h2 className="text-2xl font-bold text-foreground">{t.history.title}</h2>
           </div>
 
-          {/* Selector de fecha */}
           <div className="flex items-center gap-2">
             <Popover>
               <PopoverTrigger asChild>
@@ -77,7 +76,7 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
                   )}
                 >
                   <Calendar className="mr-2 h-4 w-4" />
-                  {selectedDate ? format(selectedDate, "d MMM yyyy", { locale: es }) : "Buscar por fecha"}
+                  {selectedDate ? format(selectedDate, "d MMM yyyy", { locale: dateLocale }) : t.history.searchByDate}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="end">
@@ -87,7 +86,7 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
                   onSelect={handleDateSelect}
                   initialFocus
                   className={cn("p-3 pointer-events-auto")}
-                  locale={es}
+                  locale={dateLocale}
                 />
               </PopoverContent>
             </Popover>
@@ -106,9 +105,11 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
 
         <div className="text-sm text-muted-foreground mb-4">
           {selectedDate ? (
-            <span>Mostrando lecturas del {format(selectedDate, "d 'de' MMMM 'de' yyyy", { locale: es })}</span>
+            <span>
+              {t.history.showingReadingsFor} {format(selectedDate, language === "es" ? "d 'de' MMMM 'de' yyyy" : "MMMM d, yyyy", { locale: dateLocale })}
+            </span>
           ) : (
-            <span>Mostrando todas las lecturas</span>
+            <span>{t.history.showingAllReadings}</span>
           )}
         </div>
 
@@ -116,7 +117,7 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
           <Card>
             <CardContent className="pt-6">
               <p className="text-muted-foreground text-center">
-                No hay lecturas históricas disponibles.
+                {t.states.noHistoricalReadings}
               </p>
             </CardContent>
           </Card>
@@ -125,7 +126,7 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {paginatedReadings.map((reading) => {
                 const formattedDate = format(new Date(reading.date), "d MMM yyyy, HH:mm", {
-                  locale: es,
+                  locale: dateLocale,
                 });
 
                 return (
@@ -150,7 +151,6 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
               })}
             </div>
 
-            {/* Paginación */}
             {totalPages > 1 && (
               <Pagination className="mt-6">
                 <PaginationContent>
@@ -186,11 +186,10 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
         )}
       </div>
 
-      {/* Modal de Detalle */}
       <Dialog open={!!selectedReading} onOpenChange={() => setSelectedReading(null)}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Detalle de Lectura</DialogTitle>
+            <DialogTitle>{t.history.readingDetail}</DialogTitle>
           </DialogHeader>
           {selectedReading && <TodayView reading={selectedReading} />}
         </DialogContent>
