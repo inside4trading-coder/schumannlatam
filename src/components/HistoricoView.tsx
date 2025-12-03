@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { SchumannReading } from "@/types/schumann";
 import { BadgeNivelActividad } from "./BadgeNivelActividad";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -7,21 +7,28 @@ import { Pagination, PaginationContent, PaginationItem, PaginationLink, Paginati
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import { format, isSameDay, parseISO } from "date-fns";
 import { es, enUS } from "date-fns/locale";
 import { TodayView } from "./TodayView";
 import { Calendar, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { supabase } from "@/integrations/supabase/client";
 
 interface HistoricoViewProps {
   readings: SchumannReading[];
 }
 
+// Translation cache
+const descriptionCache: { [key: string]: string } = {};
+
 export const HistoricoView = ({ readings }: HistoricoViewProps) => {
   const [selectedReading, setSelectedReading] = useState<SchumannReading | null>(null);
   const [selectedDate, setSelectedDate] = useState<Date | undefined>(undefined);
   const [currentPage, setCurrentPage] = useState(1);
+  const [translatedDescriptions, setTranslatedDescriptions] = useState<{ [id: string]: string }>({});
+  const [isTranslating, setIsTranslating] = useState(false);
   const { language, t } = useLanguage();
   const dateLocale = language === "es" ? es : enUS;
   
@@ -46,6 +53,61 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
   const endIndex = startIndex + ITEMS_PER_PAGE;
   const paginatedReadings = filteredReadings.slice(startIndex, endIndex);
 
+  // Translate descriptions when language is English
+  useEffect(() => {
+    if (language !== "en" || paginatedReadings.length === 0) {
+      setTranslatedDescriptions({});
+      return;
+    }
+
+    const translateDescriptions = async () => {
+      const textsToTranslate: { id: string; text: string }[] = [];
+      const cachedResults: { [id: string]: string } = {};
+
+      paginatedReadings.forEach((reading) => {
+        const truncated = truncateText(reading.descripcionTecnica, 160);
+        const cacheKey = `en:${truncated}`;
+        if (descriptionCache[cacheKey]) {
+          cachedResults[reading.id] = descriptionCache[cacheKey];
+        } else if (truncated) {
+          textsToTranslate.push({ id: reading.id, text: truncated });
+        }
+      });
+
+      if (textsToTranslate.length === 0) {
+        setTranslatedDescriptions(cachedResults);
+        return;
+      }
+
+      setIsTranslating(true);
+
+      try {
+        const { data, error } = await supabase.functions.invoke("translate", {
+          body: {
+            texts: textsToTranslate.map((t) => t.text),
+            targetLanguage: "English",
+          },
+        });
+
+        if (!error && data?.translations) {
+          textsToTranslate.forEach((item, index) => {
+            const cacheKey = `en:${item.text}`;
+            descriptionCache[cacheKey] = data.translations[index];
+            cachedResults[item.id] = data.translations[index];
+          });
+        }
+
+        setTranslatedDescriptions(cachedResults);
+      } catch (error) {
+        console.error("Translation error:", error);
+      } finally {
+        setIsTranslating(false);
+      }
+    };
+
+    translateDescriptions();
+  }, [language, paginatedReadings]);
+
   const handleDateSelect = (date: Date | undefined) => {
     setSelectedDate(date);
     setCurrentPage(1);
@@ -54,6 +116,13 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
   const clearDateFilter = () => {
     setSelectedDate(undefined);
     setCurrentPage(1);
+  };
+
+  const getDescription = (reading: SchumannReading) => {
+    if (language === "en" && translatedDescriptions[reading.id]) {
+      return translatedDescriptions[reading.id];
+    }
+    return truncateText(reading.descripcionTecnica, 160);
   };
 
   return (
@@ -142,9 +211,16 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
                       </div>
                     </CardHeader>
                     <CardContent>
-                      <CardDescription className="text-sm leading-relaxed">
-                        {truncateText(reading.descripcionTecnica, 160)}
-                      </CardDescription>
+                      {isTranslating && language === "en" ? (
+                        <div className="space-y-2">
+                          <Skeleton className="h-4 w-full" />
+                          <Skeleton className="h-4 w-3/4" />
+                        </div>
+                      ) : (
+                        <CardDescription className="text-sm leading-relaxed">
+                          {getDescription(reading)}
+                        </CardDescription>
+                      )}
                     </CardContent>
                   </Card>
                 );

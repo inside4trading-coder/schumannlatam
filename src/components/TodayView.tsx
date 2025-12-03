@@ -1,10 +1,13 @@
 import { SchumannReading } from "@/types/schumann";
 import { BadgeNivelActividad } from "./BadgeNivelActividad";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { es, enUS } from "date-fns/locale";
 import { Activity, Brain, Heart, Lightbulb } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { useTranslation } from "@/hooks/useTranslation";
+import { useMemo } from "react";
 
 interface TodayViewProps {
   reading: SchumannReading;
@@ -13,10 +16,54 @@ interface TodayViewProps {
 export const TodayView = ({ reading }: TodayViewProps) => {
   const { language, t } = useLanguage();
   const dateLocale = language === "es" ? es : enUS;
-  
+
   const formattedDate = format(new Date(reading.date), "d MMM yyyy", {
     locale: dateLocale,
   });
+
+  // Memoize texts array to prevent unnecessary re-renders
+  const textsToTranslate = useMemo(
+    () => [
+      reading.descripcionTecnica,
+      reading.sensacionesFisicas,
+      reading.sensacionesEmocionales,
+      reading.recomendaciones,
+      reading.nivelActividad,
+    ],
+    [
+      reading.descripcionTecnica,
+      reading.sensacionesFisicas,
+      reading.sensacionesEmocionales,
+      reading.recomendaciones,
+      reading.nivelActividad,
+    ]
+  );
+
+  const { translatedTexts, isTranslating } = useTranslation(textsToTranslate);
+
+  const [
+    descripcionTecnica,
+    sensacionesFisicas,
+    sensacionesEmocionales,
+    recomendaciones,
+    nivelActividad,
+  ] = translatedTexts.length > 0 ? translatedTexts : textsToTranslate;
+
+  const renderContent = (content: string | undefined | null, isLoading: boolean) => {
+    if (isLoading) {
+      return (
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-full" />
+          <Skeleton className="h-4 w-3/4" />
+        </div>
+      );
+    }
+    return (
+      <p className="text-card-foreground leading-relaxed whitespace-pre-wrap">
+        {content}
+      </p>
+    );
+  };
 
   return (
     <div className="space-y-6 animate-in fade-in-50 duration-500">
@@ -26,7 +73,7 @@ export const TodayView = ({ reading }: TodayViewProps) => {
           <h2 className="text-3xl font-bold text-foreground">{formattedDate}</h2>
           <p className="text-muted-foreground mt-1">{t.today.readingOfDay}</p>
         </div>
-        <BadgeNivelActividad nivel={reading.nivelActividad} />
+        <BadgeNivelActividad nivel={nivelActividad || reading.nivelActividad} />
       </div>
 
       {/* Imagen */}
@@ -67,9 +114,7 @@ export const TodayView = ({ reading }: TodayViewProps) => {
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-card-foreground leading-relaxed whitespace-pre-wrap">
-              {reading.descripcionTecnica}
-            </p>
+            {renderContent(descripcionTecnica, isTranslating)}
           </CardContent>
         </Card>
       )}
@@ -84,9 +129,7 @@ export const TodayView = ({ reading }: TodayViewProps) => {
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-card-foreground leading-relaxed whitespace-pre-wrap">
-              {reading.sensacionesFisicas}
-            </p>
+            {renderContent(sensacionesFisicas, isTranslating)}
           </CardContent>
         </Card>
       )}
@@ -101,9 +144,7 @@ export const TodayView = ({ reading }: TodayViewProps) => {
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-card-foreground leading-relaxed whitespace-pre-wrap">
-              {reading.sensacionesEmocionales}
-            </p>
+            {renderContent(sensacionesEmocionales, isTranslating)}
           </CardContent>
         </Card>
       )}
@@ -118,9 +159,7 @@ export const TodayView = ({ reading }: TodayViewProps) => {
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-card-foreground leading-relaxed whitespace-pre-wrap">
-              {reading.recomendaciones}
-            </p>
+            {renderContent(recomendaciones, isTranslating)}
           </CardContent>
         </Card>
       )}
