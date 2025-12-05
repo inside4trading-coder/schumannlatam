@@ -89,21 +89,6 @@ export const TodayView = ({ reading }: TodayViewProps) => {
         </Card>
       )}
 
-      {/* K-Index Forecast */}
-      <Card className="overflow-hidden">
-        <CardHeader>
-          <CardTitle>{t.today.geomagneticForecast}</CardTitle>
-          <CardDescription>{t.today.kIndexDescription}</CardDescription>
-        </CardHeader>
-        <CardContent className="p-0">
-          <iframe
-            src="https://api.meteoagent.com/widgets/v1/kindex"
-            style={{ border: 0, width: "100%", height: "500px" }}
-            title="K-Index Forecast"
-          />
-        </CardContent>
-      </Card>
-
       {/* Descripción Técnica */}
       {reading.descripcionTecnica && (
         <Card>
@@ -163,6 +148,21 @@ export const TodayView = ({ reading }: TodayViewProps) => {
           </CardContent>
         </Card>
       )}
+
+      {/* K-Index Forecast */}
+      <Card className="overflow-hidden">
+        <CardHeader>
+          <CardTitle>{t.today.geomagneticForecast}</CardTitle>
+          <CardDescription>{t.today.kIndexDescription}</CardDescription>
+        </CardHeader>
+        <CardContent className="p-0">
+          <iframe
+            src="https://api.meteoagent.com/widgets/v1/kindex"
+            style={{ border: 0, width: "100%", height: "500px" }}
+            title="K-Index Forecast"
+          />
+        </CardContent>
+      </Card>
 
       {/* Disclaimer */}
       <Card className="bg-muted/50 border-muted">
