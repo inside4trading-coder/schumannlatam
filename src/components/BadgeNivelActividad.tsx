@@ -7,10 +7,10 @@ interface BadgeNivelActividadProps {
 const getBadgeClass = (nivel: string): string => {
   const normalizado = nivel.toLowerCase().trim();
   
-  if (normalizado === "baja") return "bg-badge-baja text-foreground";
-  if (normalizado === "media") return "bg-badge-media text-foreground";
-  if (normalizado === "alta") return "bg-badge-alta text-foreground";
-  if (normalizado === "muy alta") return "bg-badge-muy-alta text-foreground";
+  if (normalizado === "baja") return "bg-badge-baja text-gray-900";
+  if (normalizado === "media") return "bg-badge-media text-gray-900";
+  if (normalizado === "alta") return "bg-badge-alta text-gray-900";
+  if (normalizado === "muy alta") return "bg-badge-muy-alta text-gray-900";
   
   return "bg-secondary text-secondary-foreground";
 };
