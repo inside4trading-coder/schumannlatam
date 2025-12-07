@@ -33,6 +33,11 @@ interface ReadingData {
   textoX: string;
 }
 
+interface ApiResponse {
+  latestReading: ReadingData | null;
+  dailyReadings: ReadingData[];
+}
+
 // Map activity levels to numeric values for averaging
 const activityLevelToNumber = (nivel: string): number => {
   const normalized = nivel.toLowerCase().trim();
@@ -122,7 +127,11 @@ serve(async (req) => {
       };
     });
 
-    // Group readings by date (YYYY-MM-DD)
+    // Get the latest hourly reading (first one since sorted descending)
+    const latestReading = allReadings.length > 0 ? allReadings[0] : null;
+    console.log(`Lectura más reciente: ${latestReading?.date}`);
+
+    // Group readings by date (YYYY-MM-DD) for daily aggregation
     const readingsByDate: Map<string, ReadingData[]> = new Map();
     
     for (const reading of allReadings) {
@@ -147,10 +156,10 @@ serve(async (req) => {
       const aggregatedActivityLevel = numberToActivityLevel(avgActivity);
       
       // Use the most recent reading of the day for other fields (first one since sorted descending)
-      const latestReading = dayReadings[0];
+      const latestDayReading = dayReadings[0];
       
       // Find reading with best content (prefer ones with image and description)
-      const bestReading = dayReadings.find(r => r.urlImagen && r.descripcionTecnica) || latestReading;
+      const bestReading = dayReadings.find(r => r.urlImagen && r.descripcionTecnica) || latestDayReading;
       
       dailyReadings.push({
         id: `daily-${dateOnly}`,
@@ -168,9 +177,18 @@ serve(async (req) => {
     // Sort by date descending
     dailyReadings.sort((a, b) => b.date.localeCompare(a.date));
 
-    console.log(`Devolviendo ${dailyReadings.length} lecturas diarias agregadas`);
+    // Remove today from daily readings since it's shown in "Hoy" section
+    const todayDate = latestReading ? extractDateOnly(latestReading.date) : '';
+    const historicDailyReadings = dailyReadings.filter(r => r.date !== todayDate);
 
-    return new Response(JSON.stringify(dailyReadings), {
+    console.log(`Devolviendo lectura actual + ${historicDailyReadings.length} lecturas diarias históricas`);
+
+    const apiResponse: ApiResponse = {
+      latestReading,
+      dailyReadings: historicDailyReadings,
+    };
+
+    return new Response(JSON.stringify(apiResponse), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {

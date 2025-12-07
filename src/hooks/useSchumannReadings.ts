@@ -2,11 +2,16 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { SchumannReading } from "@/types/schumann";
 
+interface ApiResponse {
+  latestReading: SchumannReading | null;
+  dailyReadings: SchumannReading[];
+}
+
 export const useSchumannReadings = () => {
-  const { data: readings = [], isLoading, isError } = useQuery({
+  const { data, isLoading, isError } = useQuery({
     queryKey: ["schumann-readings"],
     queryFn: async () => {
-      const { data, error } = await supabase.functions.invoke<SchumannReading[]>(
+      const { data, error } = await supabase.functions.invoke<ApiResponse>(
         "schumann-readings"
       );
 
@@ -15,14 +20,15 @@ export const useSchumannReadings = () => {
         throw error;
       }
 
-      return data || [];
+      return data || { latestReading: null, dailyReadings: [] };
     },
     retry: 2,
     staleTime: 5 * 60 * 1000, // 5 minutos
   });
 
   return {
-    readings,
+    latestReading: data?.latestReading || null,
+    dailyReadings: data?.dailyReadings || [],
     loading: isLoading,
     error: isError,
   };

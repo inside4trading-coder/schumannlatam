@@ -13,7 +13,7 @@ import schumannLogo from "@/assets/schumann-logo.png";
 import { useLanguage } from "@/i18n/LanguageContext";
 
 const Index = () => {
-  const { readings, loading, error } = useSchumannReadings();
+  const { latestReading, dailyReadings, loading, error } = useSchumannReadings();
   const { t } = useLanguage();
 
   return (
@@ -58,7 +58,7 @@ const Index = () => {
               </div>
             </CardContent>
           </Card>
-        ) : readings.length === 0 ? (
+        ) : !latestReading ? (
           <Card>
             <CardContent className="pt-6">
               <p className="text-muted-foreground text-center">{t.states.noReadings}</p>
@@ -82,11 +82,11 @@ const Index = () => {
             </TabsList>
 
             <TabsContent value="hoy" className="space-y-4">
-              <TodayView reading={readings[0]} />
+              <TodayView reading={latestReading} />
             </TabsContent>
 
             <TabsContent value="historico" className="space-y-4">
-              <HistoricoView readings={readings.slice(1)} />
+              <HistoricoView readings={dailyReadings} />
             </TabsContent>
 
             <TabsContent value="biblioteca" className="space-y-4">
