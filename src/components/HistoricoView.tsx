@@ -193,12 +193,7 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
         ) : (
           <>
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {paginatedReadings.map((reading) => {
-                const formattedDate = format(new Date(reading.date), "d MMM yyyy, HH:mm", {
-                  locale: dateLocale,
-                });
-
-                return (
+              {paginatedReadings.map((reading) => (
                   <Card
                     key={reading.id}
                     className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50 hover:-translate-y-1"
@@ -206,7 +201,9 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
                   >
                     <CardHeader>
                       <div className="flex items-start justify-between gap-2">
-                        <CardTitle className="text-lg">{formattedDate}</CardTitle>
+                        <CardTitle className="text-lg">
+                          {format(new Date(reading.date), "d MMM yyyy", { locale: dateLocale })}
+                        </CardTitle>
                         <BadgeNivelActividad nivel={reading.nivelActividad} />
                       </div>
                     </CardHeader>
@@ -223,8 +220,7 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
                       )}
                     </CardContent>
                   </Card>
-                );
-              })}
+              ))}
             </div>
 
             {totalPages > 1 && (
