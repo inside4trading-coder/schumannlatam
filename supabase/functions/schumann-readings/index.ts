@@ -21,6 +21,42 @@ interface NotionResponse {
   results: NotionPage[];
 }
 
+interface ReadingData {
+  id: string;
+  date: string;
+  nivelActividad: string;
+  urlImagen: string;
+  descripcionTecnica: string;
+  sensacionesFisicas: string;
+  sensacionesEmocionales: string;
+  recomendaciones: string;
+  textoX: string;
+}
+
+// Map activity levels to numeric values for averaging
+const activityLevelToNumber = (nivel: string): number => {
+  const normalized = nivel.toLowerCase().trim();
+  if (normalized === 'baja') return 1;
+  if (normalized === 'media') return 2;
+  if (normalized === 'alta') return 3;
+  if (normalized === 'muy alta') return 4;
+  return 2; // Default to media
+};
+
+// Convert numeric average back to activity level
+const numberToActivityLevel = (avg: number): string => {
+  if (avg <= 1.5) return 'Baja';
+  if (avg <= 2.5) return 'Media';
+  if (avg <= 3.5) return 'Alta';
+  return 'Muy alta';
+};
+
+// Extract just the date part (YYYY-MM-DD) from a datetime string
+const extractDateOnly = (dateString: string): string => {
+  if (!dateString) return '';
+  return dateString.split('T')[0];
+};
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -61,17 +97,17 @@ serve(async (req) => {
     }
 
     const data: NotionResponse = await response.json();
-    console.log(`Obtenidas ${data.results.length} lecturas`);
+    console.log(`Obtenidas ${data.results.length} lecturas de Notion`);
 
-    // Transformar los datos de Notion al formato esperado
-    const readings = data.results.map((page) => {
+    // Función auxiliar para extraer texto de rich_text
+    const extractText = (richText: any[]): string => {
+      if (!richText || !Array.isArray(richText)) return '';
+      return richText.map((t: any) => t.plain_text || '').join('');
+    };
+
+    // Transform Notion data to readings
+    const allReadings: ReadingData[] = data.results.map((page) => {
       const props = page.properties;
-
-      // Función auxiliar para extraer texto de rich_text
-      const extractText = (richText: any[]): string => {
-        if (!richText || !Array.isArray(richText)) return '';
-        return richText.map((t: any) => t.plain_text || '').join('');
-      };
 
       return {
         id: page.id,
@@ -86,7 +122,55 @@ serve(async (req) => {
       };
     });
 
-    return new Response(JSON.stringify(readings), {
+    // Group readings by date (YYYY-MM-DD)
+    const readingsByDate: Map<string, ReadingData[]> = new Map();
+    
+    for (const reading of allReadings) {
+      const dateOnly = extractDateOnly(reading.date);
+      if (!dateOnly) continue;
+      
+      if (!readingsByDate.has(dateOnly)) {
+        readingsByDate.set(dateOnly, []);
+      }
+      readingsByDate.get(dateOnly)!.push(reading);
+    }
+
+    console.log(`Agrupadas en ${readingsByDate.size} días`);
+
+    // Create daily aggregated readings
+    const dailyReadings: ReadingData[] = [];
+    
+    for (const [dateOnly, dayReadings] of readingsByDate) {
+      // Calculate average activity level
+      const activitySum = dayReadings.reduce((sum, r) => sum + activityLevelToNumber(r.nivelActividad), 0);
+      const avgActivity = activitySum / dayReadings.length;
+      const aggregatedActivityLevel = numberToActivityLevel(avgActivity);
+      
+      // Use the most recent reading of the day for other fields (first one since sorted descending)
+      const latestReading = dayReadings[0];
+      
+      // Find reading with best content (prefer ones with image and description)
+      const bestReading = dayReadings.find(r => r.urlImagen && r.descripcionTecnica) || latestReading;
+      
+      dailyReadings.push({
+        id: `daily-${dateOnly}`,
+        date: dateOnly, // Use just the date without time
+        nivelActividad: aggregatedActivityLevel,
+        urlImagen: bestReading.urlImagen,
+        descripcionTecnica: bestReading.descripcionTecnica,
+        sensacionesFisicas: bestReading.sensacionesFisicas,
+        sensacionesEmocionales: bestReading.sensacionesEmocionales,
+        recomendaciones: bestReading.recomendaciones,
+        textoX: bestReading.textoX,
+      });
+    }
+
+    // Sort by date descending
+    dailyReadings.sort((a, b) => b.date.localeCompare(a.date));
+
+    console.log(`Devolviendo ${dailyReadings.length} lecturas diarias agregadas`);
+
+    return new Response(JSON.stringify(dailyReadings), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
