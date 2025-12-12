@@ -75,34 +75,55 @@ serve(async (req) => {
 
     console.log('Llamando a la API de Notion...');
 
-    const response = await fetch(
-      'https://api.notion.com/v1/databases/2bb88e97a96880c08324c9903ee749f0/query',
-      {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${notionToken}`,
-          'Content-Type': 'application/json',
-          'Notion-Version': '2022-06-28',
-        },
-        body: JSON.stringify({
-          sorts: [
-            {
-              property: 'Date',
-              direction: 'descending',
-            },
-          ],
-        }),
-      }
-    );
+    // Fetch all pages from Notion (handles pagination)
+    const allNotionPages: NotionPage[] = [];
+    let hasMore = true;
+    let startCursor: string | undefined = undefined;
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('Error de Notion API:', response.status, errorText);
-      throw new Error(`Error de Notion API: ${response.status}`);
+    while (hasMore) {
+      const requestBody: any = {
+        sorts: [
+          {
+            property: 'Date',
+            direction: 'descending',
+          },
+        ],
+        page_size: 100,
+      };
+
+      if (startCursor) {
+        requestBody.start_cursor = startCursor;
+      }
+
+      const response = await fetch(
+        'https://api.notion.com/v1/databases/2bb88e97a96880c08324c9903ee749f0/query',
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${notionToken}`,
+            'Content-Type': 'application/json',
+            'Notion-Version': '2022-06-28',
+          },
+          body: JSON.stringify(requestBody),
+        }
+      );
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.error('Error de Notion API:', response.status, errorText);
+        throw new Error(`Error de Notion API: ${response.status}`);
+      }
+
+      const data = await response.json();
+      allNotionPages.push(...data.results);
+      
+      hasMore = data.has_more;
+      startCursor = data.next_cursor;
+      
+      console.log(`Obtenidas ${data.results.length} lecturas (total: ${allNotionPages.length})`);
     }
 
-    const data: NotionResponse = await response.json();
-    console.log(`Obtenidas ${data.results.length} lecturas de Notion`);
+    console.log(`Total de lecturas obtenidas de Notion: ${allNotionPages.length}`);
 
     // Función auxiliar para extraer texto de rich_text
     const extractText = (richText: any[]): string => {
@@ -111,7 +132,7 @@ serve(async (req) => {
     };
 
     // Transform Notion data to readings
-    const allReadings: ReadingData[] = data.results.map((page) => {
+    const allReadings: ReadingData[] = allNotionPages.map((page: NotionPage) => {
       const props = page.properties;
 
       return {
