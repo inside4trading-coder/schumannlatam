@@ -29,6 +29,8 @@ export const translations = {
       physicalSensations: "Sensaciones físicas",
       emotionalSensations: "Sensaciones emocionales",
       recommendations: "Recomendaciones",
+      communityChat: "Chat de la comunidad",
+      communityChatDescription: "Conecta con otros miembros de la comunidad",
       disclaimer: "Esta información es orientativa y no sustituye asesoramiento médico profesional.",
     },
     // History View
@@ -194,6 +196,8 @@ export const translations = {
       physicalSensations: "Physical sensations",
       emotionalSensations: "Emotional sensations",
       recommendations: "Recommendations",
+      communityChat: "Community Chat",
+      communityChatDescription: "Connect with other community members",
       disclaimer: "This information is indicative and does not replace professional medical advice.",
     },
     // History View
