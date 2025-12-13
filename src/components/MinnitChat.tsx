@@ -18,9 +18,10 @@ export const MinnitChat = () => {
       containerRef.current.appendChild(span);
     }
 
-    // Create and append the script
+    // Create and append the script with dynamic cache-busting
     const script = document.createElement("script");
-    script.src = "https://minnit.chat/js/embed.js?c=1758971289";
+    const timestamp = Date.now();
+    script.src = `https://minnit.chat/js/embed.js?c=${timestamp}`;
     script.defer = true;
     document.body.appendChild(script);
 
