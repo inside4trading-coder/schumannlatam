@@ -4,10 +4,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { es, enUS } from "date-fns/locale";
-import { Activity, Brain, Heart, Lightbulb } from "lucide-react";
+import { Activity, Brain, Heart, Lightbulb, MessageCircle } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useMemo } from "react";
+import { MinnitChat } from "./MinnitChat";
 
 interface TodayViewProps {
   reading: SchumannReading;
@@ -149,7 +150,19 @@ export const TodayView = ({ reading }: TodayViewProps) => {
         </Card>
       )}
 
-      {/* Minnit Chat - Temporarily disabled for configuration */}
+      {/* Minnit Chat */}
+      <Card className="overflow-hidden">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <MessageCircle className="h-5 w-5 text-primary" />
+            <CardTitle>{t.today.communityChat || "Chat de la comunidad"}</CardTitle>
+          </div>
+          <CardDescription>{t.today.communityChatDescription || "Conecta con otros miembros de la comunidad"}</CardDescription>
+        </CardHeader>
+        <CardContent className="p-4">
+          <MinnitChat />
+        </CardContent>
+      </Card>
 
       {/* Disclaimer */}
       <Card className="bg-muted/50 border-muted">

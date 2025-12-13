@@ -7,7 +7,7 @@ export const MinnitChat = () => {
     // Create the span element
     const span = document.createElement("span");
     span.className = "minnit-chat-sembed";
-    span.setAttribute("data-chatname", "https://organizations.minnit.chat/744699308636047/c/Main?embed");
+    span.setAttribute("data-chatname", "https://organizations.minnit.chat/744699308636047/c/Sensaciones?embed");
     span.setAttribute("data-style", "width:100%; height:500px; max-height:90vh;");
     span.setAttribute("data-version", "1.55");
     span.style.display = "none";
