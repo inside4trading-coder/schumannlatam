@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 import { es, enUS } from "date-fns/locale";
-import { Activity, Brain, Heart, Lightbulb } from "lucide-react";
+import { Activity, Brain, Heart, Lightbulb, Clock } from "lucide-react";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { useTranslation } from "@/hooks/useTranslation";
 import { useMemo } from "react";
@@ -65,6 +65,10 @@ export const TodayView = ({ reading }: TodayViewProps) => {
     );
   };
 
+  // Check if detailed data is missing
+  const hasDetailedData = reading.descripcionTecnica || reading.sensacionesFisicas || 
+                          reading.sensacionesEmocionales || reading.recomendaciones;
+
   return (
     <div className="space-y-6 animate-in fade-in-50 duration-500">
       {/* Header */}
@@ -86,6 +90,21 @@ export const TodayView = ({ reading }: TodayViewProps) => {
               className="w-full max-h-80 object-contain rounded-xl"
             />
           </CardContent>
+        </Card>
+      )}
+
+      {/* Indicador de datos en actualización */}
+      {!hasDetailedData && (
+        <Card className="border-amber-500/30 bg-amber-500/10">
+          <CardHeader>
+            <div className="flex items-center gap-2">
+              <Clock className="h-5 w-5 text-amber-500 animate-pulse" />
+              <CardTitle className="text-amber-600 dark:text-amber-400">{t.today.dataUpdating}</CardTitle>
+            </div>
+            <CardDescription className="text-amber-600/80 dark:text-amber-400/80">
+              {t.today.dataUpdatingDescription}
+            </CardDescription>
+          </CardHeader>
         </Card>
       )}
 
