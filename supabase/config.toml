@@ -1,1 +1,4 @@
 project_id = "oxsbzoezvvyjgeitxdyh"
+
+[functions.setup-newsletter-notion]
+verify_jwt = false
