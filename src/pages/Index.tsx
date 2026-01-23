@@ -3,6 +3,7 @@ import { TodayView } from "@/components/TodayView";
 import { HistoricoView } from "@/components/HistoricoView";
 import { BibliotecaView } from "@/components/BibliotecaView";
 import { AgradecimientosView } from "@/components/AgradecimientosView";
+import { NewsletterSubscribeForm } from "@/components/NewsletterSubscribeForm";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -98,6 +99,11 @@ const Index = () => {
             </TabsContent>
           </Tabs>
         )}
+
+        {/* Newsletter Subscription */}
+        <div className="mt-12 max-w-md mx-auto">
+          <NewsletterSubscribeForm />
+        </div>
       </main>
     </div>
   );

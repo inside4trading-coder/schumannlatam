@@ -8,6 +8,7 @@ import { ThemeProvider } from "next-themes";
 import { LanguageProvider } from "@/i18n/LanguageContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import AdminNewsletter from "./pages/AdminNewsletter";
 
 const queryClient = new QueryClient();
 
@@ -21,7 +22,7 @@ const App = () => (
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="/admin/newsletter" element={<AdminNewsletter />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
