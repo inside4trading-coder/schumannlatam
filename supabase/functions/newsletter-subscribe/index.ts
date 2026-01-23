@@ -6,7 +6,12 @@ const corsHeaders = {
 };
 
 const NOTION_TOKEN = Deno.env.get("NOTION_TOKEN");
-const SUBSCRIBERS_DB_ID = Deno.env.get("NOTION_SUBSCRIBERS_DB_ID");
+// Clean the database ID - remove query params and format as proper UUID
+const rawDbId = Deno.env.get("NOTION_SUBSCRIBERS_DB_ID") || "";
+const cleanId = rawDbId.split("?")[0].replace(/-/g, "");
+const SUBSCRIBERS_DB_ID = cleanId.length === 32 
+  ? `${cleanId.slice(0, 8)}-${cleanId.slice(8, 12)}-${cleanId.slice(12, 16)}-${cleanId.slice(16, 20)}-${cleanId.slice(20)}`
+  : rawDbId;
 
 interface SubscribeRequest {
   email: string;
