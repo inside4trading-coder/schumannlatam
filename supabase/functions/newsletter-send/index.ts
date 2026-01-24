@@ -7,7 +7,12 @@ const corsHeaders = {
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const NOTION_TOKEN = Deno.env.get("NOTION_TOKEN");
-const SUBSCRIBERS_DB_ID = Deno.env.get("NOTION_SUBSCRIBERS_DB_ID");
+// Clean the database ID - remove query params and format as proper UUID
+const rawDbId = Deno.env.get("NOTION_SUBSCRIBERS_DB_ID") || "";
+const cleanId = rawDbId.split("?")[0].replace(/-/g, "");
+const SUBSCRIBERS_DB_ID = cleanId.length === 32 
+  ? `${cleanId.slice(0, 8)}-${cleanId.slice(8, 12)}-${cleanId.slice(12, 16)}-${cleanId.slice(16, 20)}-${cleanId.slice(20)}`
+  : rawDbId;
 
 interface SendNewsletterRequest {
   subject: string;
@@ -67,10 +72,10 @@ serve(async (req: Request): Promise<Response> => {
       );
     }
 
-    // Extract emails
+    // Extract emails - Email is a title property in Notion
     const emails = subscribers
-      .map((sub: any) => sub.properties.Email?.email)
-      .filter((email: string | null) => email);
+      .map((sub: any) => sub.properties.Email?.title?.[0]?.text?.content)
+      .filter((email: string | null | undefined) => email);
 
     console.log(`Sending newsletter to ${emails.length} emails`);
 
@@ -84,6 +89,7 @@ serve(async (req: Request): Promise<Response> => {
       
       for (const email of batch) {
         try {
+          console.log(`Attempting to send email to: ${email}`);
           const res = await fetch("https://api.resend.com/emails", {
             method: "POST",
             headers: {
@@ -100,15 +106,16 @@ serve(async (req: Request): Promise<Response> => {
           });
           
           if (res.ok) {
+            console.log(`Successfully sent to: ${email}`);
             sentCount++;
           } else {
             const errorData = await res.json();
-            console.error(`Failed to send to ${email}:`, errorData);
-            errors.push(email);
+            console.error(`Resend API error for ${email}:`, JSON.stringify(errorData));
+            errors.push(`${email}: ${errorData.message || 'Unknown error'}`);
           }
         } catch (emailError: any) {
-          console.error(`Failed to send to ${email}:`, emailError);
-          errors.push(email);
+          console.error(`Exception sending to ${email}:`, emailError.message);
+          errors.push(`${email}: ${emailError.message}`);
         }
       }
       
