@@ -18,6 +18,7 @@ interface SendNewsletterRequest {
   subject: string;
   htmlContent: string;
   textContent?: string;
+  testEmail?: string; // Optional: send only to this email for testing
 }
 
 serve(async (req: Request): Promise<Response> => {
@@ -30,7 +31,7 @@ serve(async (req: Request): Promise<Response> => {
       throw new Error("Missing Notion configuration");
     }
 
-    const { subject, htmlContent, textContent }: SendNewsletterRequest = await req.json();
+    const { subject, htmlContent, textContent, testEmail }: SendNewsletterRequest = await req.json();
 
     if (!subject || !htmlContent) {
       return new Response(
@@ -39,43 +40,52 @@ serve(async (req: Request): Promise<Response> => {
       );
     }
 
-    console.log("Fetching active subscribers from Notion...");
+    let emails: string[] = [];
 
-    // Get active subscribers
-    const subscribersResponse = await fetch(
-      `https://api.notion.com/v1/databases/${SUBSCRIBERS_DB_ID}/query`,
-      {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${NOTION_TOKEN}`,
-          "Content-Type": "application/json",
-          "Notion-Version": "2022-06-28",
-        },
-        body: JSON.stringify({
-          filter: {
-            property: "Activo",
-            checkbox: { equals: true },
+    // If testEmail is provided, send only to that email (for testing)
+    if (testEmail) {
+      console.log(`Test mode: sending only to ${testEmail}`);
+      emails = [testEmail];
+    } else {
+      // Production mode: fetch from Notion
+      console.log("Fetching active subscribers from Notion...");
+
+      // Get active subscribers
+      const subscribersResponse = await fetch(
+        `https://api.notion.com/v1/databases/${SUBSCRIBERS_DB_ID}/query`,
+        {
+          method: "POST",
+          headers: {
+            "Authorization": `Bearer ${NOTION_TOKEN}`,
+            "Content-Type": "application/json",
+            "Notion-Version": "2022-06-28",
           },
-        }),
-      }
-    );
-
-    const subscribersData = await subscribersResponse.json();
-    const subscribers = subscribersData.results || [];
-
-    console.log(`Found ${subscribers.length} active subscribers`);
-
-    if (subscribers.length === 0) {
-      return new Response(
-        JSON.stringify({ success: true, sent: 0, message: "No active subscribers" }),
-        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+          body: JSON.stringify({
+            filter: {
+              property: "Activo",
+              checkbox: { equals: true },
+            },
+          }),
+        }
       );
-    }
 
-    // Extract emails - Email is a title property in Notion
-    const emails = subscribers
-      .map((sub: any) => sub.properties.Email?.title?.[0]?.text?.content)
-      .filter((email: string | null | undefined) => email);
+      const subscribersData = await subscribersResponse.json();
+      const subscribers = subscribersData.results || [];
+
+      console.log(`Found ${subscribers.length} active subscribers`);
+
+      if (subscribers.length === 0) {
+        return new Response(
+          JSON.stringify({ success: true, sent: 0, message: "No active subscribers" }),
+          { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+
+      // Extract emails - Email is a title property in Notion
+      emails = subscribers
+        .map((sub: any) => sub.properties.Email?.title?.[0]?.text?.content)
+        .filter((email: string | null | undefined) => email);
+    }
 
     console.log(`Sending newsletter to ${emails.length} emails`);
 
