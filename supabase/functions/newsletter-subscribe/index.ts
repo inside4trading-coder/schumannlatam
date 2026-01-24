@@ -54,7 +54,7 @@ serve(async (req: Request): Promise<Response> => {
         body: JSON.stringify({
           filter: {
             property: "Email",
-            email: { equals: email },
+            title: { equals: email },
           },
         }),
       }
@@ -81,8 +81,8 @@ serve(async (req: Request): Promise<Response> => {
       body: JSON.stringify({
         parent: { database_id: SUBSCRIBERS_DB_ID },
         properties: {
-          Email: { email: email },
-          Nombre: { title: [{ text: { content: name || "" } }] },
+          Email: { title: [{ text: { content: email } }] },
+          Nombre: { rich_text: [{ text: { content: name || "" } }] },
           Activo: { checkbox: true },
           Fecha_Suscripcion: { date: { start: new Date().toISOString().split("T")[0] } },
         },
