@@ -27,7 +27,7 @@ const Index = () => {
               <img
                 src={schumannLogo}
                 alt="Resonancia Schumann Logo"
-                className="h-16 sm:h-24 md:h-28 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer"
+                className="h-16 sm:h-32 md:h-36 lg:h-40 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer"
               />
               <div>
                 <h1 className="text-3xl font-bold text-foreground">{t.header.title}</h1>
