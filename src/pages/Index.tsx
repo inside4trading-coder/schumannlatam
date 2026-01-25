@@ -3,7 +3,7 @@ import { TodayView } from "@/components/TodayView";
 import { HistoricoView } from "@/components/HistoricoView";
 import { BibliotecaView } from "@/components/BibliotecaView";
 import { AgradecimientosView } from "@/components/AgradecimientosView";
-import { NewsletterSubscribeForm } from "@/components/NewsletterSubscribeForm";
+import { NewsletterSubscribeCompact } from "@/components/NewsletterSubscribeCompact";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -35,6 +35,7 @@ const Index = () => {
               </div>
             </div>
             <div className="flex items-center gap-2">
+              <NewsletterSubscribeCompact />
               <LanguageToggle />
               <ThemeToggle />
             </div>
@@ -100,10 +101,6 @@ const Index = () => {
           </Tabs>
         )}
 
-        {/* Newsletter Subscription */}
-        <div className="mt-12 max-w-md mx-auto">
-          <NewsletterSubscribeForm />
-        </div>
       </main>
     </div>
   );
