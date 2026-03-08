@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useSchumannReadings } from "@/hooks/useSchumannReadings";
 import { TodayView } from "@/components/TodayView";
 import { HistoricoView } from "@/components/HistoricoView";
@@ -6,53 +7,88 @@ import { AgradecimientosView } from "@/components/AgradecimientosView";
 import { NewsletterSubscribeCompact } from "@/components/NewsletterSubscribeCompact";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageToggle } from "@/components/LanguageToggle";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle } from "lucide-react";
+import { AlertCircle, Zap, Clock, BookOpen, Heart } from "lucide-react";
 import schumannLogo from "@/assets/schumann-logo.png";
 import { useLanguage } from "@/i18n/LanguageContext";
+import { cn } from "@/lib/utils";
+
+type View = "today" | "history" | "library" | "acknowledgements";
 
 const Index = () => {
   const { latestReading, dailyReadings, loading, error } = useSchumannReadings();
   const { t } = useLanguage();
+  const [activeView, setActiveView] = useState<View>("today");
+
+  const navItems: { id: View; label: string; icon: React.ElementType }[] = [
+    { id: "today", label: t.nav.today, icon: Zap },
+    { id: "history", label: t.nav.history, icon: Clock },
+    { id: "library", label: t.nav.library, icon: BookOpen },
+    { id: "acknowledgements", label: t.nav.acknowledgements, icon: Heart },
+  ];
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="border-b bg-card/50 backdrop-blur supports-[backdrop-filter]:bg-card/30">
-        <div className="container mx-auto px-4 py-2">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div>
-                <h1 className="text-3xl font-bold text-foreground">{t.header.title}</h1>
-                <p className="text-sm text-muted-foreground mt-1">{t.header.subtitle}</p>
-              </div>
-              <img
-                src={schumannLogo}
-                alt="Resonancia Schumann Logo"
-                className="h-16 sm:h-32 md:h-36 lg:h-40 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <NewsletterSubscribeCompact />
-              <LanguageToggle />
-              <ThemeToggle />
-            </div>
-          </div>
+    <div className="min-h-screen bg-background flex flex-col">
+      {/* Top Bar - Controls */}
+      <div className="border-b border-border/50 bg-card/50 backdrop-blur-sm">
+        <div className="container mx-auto px-4 py-1.5 flex items-center justify-end gap-1.5">
+          <NewsletterSubscribeCompact />
+          <LanguageToggle />
+          <ThemeToggle />
+        </div>
+      </div>
+
+      {/* Hero Header */}
+      <header className="relative overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
+        <div className="container mx-auto px-4 py-8 md:py-12 flex flex-col items-center text-center">
+          <img
+            src={schumannLogo}
+            alt="Resonancia Schumann Logo"
+            className="h-20 sm:h-28 md:h-32 w-auto object-contain animate-pulse-glow mb-4"
+          />
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-light tracking-tight text-foreground">
+            {t.header.title}
+          </h1>
+          <p className="text-sm sm:text-base text-muted-foreground mt-2 font-light">
+            {t.header.subtitle}
+          </p>
         </div>
       </header>
 
+      {/* Desktop Nav */}
+      <nav className="hidden md:block sticky top-0 z-40 border-b border-border/50 bg-card/80 backdrop-blur-xl">
+        <div className="container mx-auto px-4">
+          <div className="flex items-center justify-center gap-1">
+            {navItems.map(({ id, label, icon: Icon }) => (
+              <button
+                key={id}
+                onClick={() => setActiveView(id)}
+                className={cn(
+                  "flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all border-b-2 -mb-px",
+                  activeView === id
+                    ? "border-primary text-primary"
+                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
+                )}
+              >
+                <Icon className="h-4 w-4" />
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </nav>
+
       {/* Main Content */}
-      <main className="container mx-auto px-4 py-8">
+      <main className="container mx-auto px-4 py-8 flex-1 pb-24 md:pb-8">
         {loading ? (
-          <div className="space-y-4">
+          <div className="space-y-4 max-w-3xl mx-auto">
             <Skeleton className="h-12 w-full" />
             <Skeleton className="h-64 w-full" />
             <Skeleton className="h-32 w-full" />
           </div>
         ) : error ? (
-          <Card className="border-destructive">
+          <Card className="border-destructive max-w-xl mx-auto">
             <CardContent className="pt-6">
               <div className="flex items-center gap-2 text-destructive">
                 <AlertCircle className="h-5 w-5" />
@@ -61,47 +97,41 @@ const Index = () => {
             </CardContent>
           </Card>
         ) : !latestReading ? (
-          <Card>
+          <Card className="max-w-xl mx-auto">
             <CardContent className="pt-6">
               <p className="text-muted-foreground text-center">{t.states.noReadings}</p>
             </CardContent>
           </Card>
         ) : (
-          <Tabs defaultValue="hoy" className="space-y-6">
-            <TabsList className="inline-flex h-auto w-full max-w-2xl mx-auto overflow-x-auto md:grid md:grid-cols-4 md:overflow-x-visible p-1 gap-1">
-              <TabsTrigger value="hoy" className="flex-shrink-0 md:flex-shrink px-3 py-2 text-sm whitespace-nowrap">
-                {t.nav.today}
-              </TabsTrigger>
-              <TabsTrigger value="historico" className="flex-shrink-0 md:flex-shrink px-3 py-2 text-sm whitespace-nowrap">
-                {t.nav.history}
-              </TabsTrigger>
-              <TabsTrigger value="biblioteca" className="flex-shrink-0 md:flex-shrink px-3 py-2 text-sm whitespace-nowrap">
-                {t.nav.library}
-              </TabsTrigger>
-              <TabsTrigger value="agradecimientos" className="flex-shrink-0 md:flex-shrink px-3 py-2 text-sm whitespace-nowrap">
-                {t.nav.acknowledgements}
-              </TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="hoy" className="space-y-4">
-              <TodayView reading={latestReading} />
-            </TabsContent>
-
-            <TabsContent value="historico" className="space-y-4">
-              <HistoricoView readings={dailyReadings} />
-            </TabsContent>
-
-            <TabsContent value="biblioteca" className="space-y-4">
-              <BibliotecaView />
-            </TabsContent>
-
-            <TabsContent value="agradecimientos" className="space-y-4">
-              <AgradecimientosView />
-            </TabsContent>
-          </Tabs>
+          <div className="animate-in fade-in-50 duration-300">
+            {activeView === "today" && <TodayView reading={latestReading} />}
+            {activeView === "history" && <HistoricoView readings={dailyReadings} />}
+            {activeView === "library" && <BibliotecaView />}
+            {activeView === "acknowledgements" && <AgradecimientosView />}
+          </div>
         )}
-
       </main>
+
+      {/* Mobile Bottom Nav */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-card/90 backdrop-blur-xl safe-area-inset-bottom">
+        <div className="flex items-center justify-around px-2 py-2">
+          {navItems.map(({ id, label, icon: Icon }) => (
+            <button
+              key={id}
+              onClick={() => setActiveView(id)}
+              className={cn(
+                "flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-all text-xs",
+                activeView === id
+                  ? "text-primary"
+                  : "text-muted-foreground"
+              )}
+            >
+              <Icon className={cn("h-5 w-5", activeView === id && "drop-shadow-sm")} />
+              <span className="font-medium truncate max-w-[4.5rem]">{label}</span>
+            </button>
+          ))}
+        </div>
+      </nav>
     </div>
   );
 };
