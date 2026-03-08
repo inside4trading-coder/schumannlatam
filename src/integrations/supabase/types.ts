@@ -14,7 +14,84 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      schumann_daily_cache: {
+        Row: {
+          date_key: string
+          descripcion_tecnica: string | null
+          nivel_actividad: string
+          reading_count: number
+          recomendaciones: string | null
+          sensaciones_emocionales: string | null
+          sensaciones_fisicas: string | null
+          synced_at: string
+          texto_x: string | null
+          url_imagen: string | null
+        }
+        Insert: {
+          date_key: string
+          descripcion_tecnica?: string | null
+          nivel_actividad?: string
+          reading_count?: number
+          recomendaciones?: string | null
+          sensaciones_emocionales?: string | null
+          sensaciones_fisicas?: string | null
+          synced_at?: string
+          texto_x?: string | null
+          url_imagen?: string | null
+        }
+        Update: {
+          date_key?: string
+          descripcion_tecnica?: string | null
+          nivel_actividad?: string
+          reading_count?: number
+          recomendaciones?: string | null
+          sensaciones_emocionales?: string | null
+          sensaciones_fisicas?: string | null
+          synced_at?: string
+          texto_x?: string | null
+          url_imagen?: string | null
+        }
+        Relationships: []
+      }
+      schumann_readings_cache: {
+        Row: {
+          date: string
+          descripcion_tecnica: string | null
+          id: string
+          nivel_actividad: string
+          recomendaciones: string | null
+          sensaciones_emocionales: string | null
+          sensaciones_fisicas: string | null
+          synced_at: string
+          texto_x: string | null
+          url_imagen: string | null
+        }
+        Insert: {
+          date: string
+          descripcion_tecnica?: string | null
+          id: string
+          nivel_actividad?: string
+          recomendaciones?: string | null
+          sensaciones_emocionales?: string | null
+          sensaciones_fisicas?: string | null
+          synced_at?: string
+          texto_x?: string | null
+          url_imagen?: string | null
+        }
+        Update: {
+          date?: string
+          descripcion_tecnica?: string | null
+          id?: string
+          nivel_actividad?: string
+          recomendaciones?: string | null
+          sensaciones_emocionales?: string | null
+          sensaciones_fisicas?: string | null
+          synced_at?: string
+          texto_x?: string | null
+          url_imagen?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
