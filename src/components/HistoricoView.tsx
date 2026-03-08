@@ -1,7 +1,7 @@
 import { useState, useMemo, useEffect } from "react";
 import { SchumannReading } from "@/types/schumann";
 import { BadgeNivelActividad } from "./BadgeNivelActividad";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -20,7 +20,6 @@ interface HistoricoViewProps {
   readings: SchumannReading[];
 }
 
-// Translation cache
 const descriptionCache: { [key: string]: string } = {};
 
 export const HistoricoView = ({ readings }: HistoricoViewProps) => {
@@ -31,29 +30,23 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
   const [isTranslating, setIsTranslating] = useState(false);
   const { language, t } = useLanguage();
   const dateLocale = language === "es" ? es : enUS;
-  
-  const ITEMS_PER_PAGE = 9;
 
-  const truncateText = (text: string, maxLength: number = 140) => {
+  const ITEMS_PER_PAGE = 10;
+
+  const truncateText = (text: string, maxLength: number = 100) => {
     if (!text || text.length <= maxLength) return text;
     return text.substring(0, maxLength) + "...";
   };
 
   const filteredReadings = useMemo(() => {
     if (!selectedDate) return readings;
-    
-    return readings.filter((reading) => {
-      const readingDate = parseISO(reading.date);
-      return isSameDay(readingDate, selectedDate);
-    });
+    return readings.filter((reading) => isSameDay(parseISO(reading.date), selectedDate));
   }, [readings, selectedDate]);
 
   const totalPages = Math.ceil(filteredReadings.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const paginatedReadings = filteredReadings.slice(startIndex, endIndex);
+  const paginatedReadings = filteredReadings.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  // Translate descriptions when language is English
   useEffect(() => {
     if (language !== "en" || paginatedReadings.length === 0) {
       setTranslatedDescriptions({});
@@ -65,7 +58,7 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
       const cachedResults: { [id: string]: string } = {};
 
       paginatedReadings.forEach((reading) => {
-        const truncated = truncateText(reading.descripcionTecnica, 160);
+        const truncated = truncateText(reading.descripcionTecnica, 100);
         const cacheKey = `en:${truncated}`;
         if (descriptionCache[cacheKey]) {
           cachedResults[reading.id] = descriptionCache[cacheKey];
@@ -80,13 +73,9 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
       }
 
       setIsTranslating(true);
-
       try {
         const { data, error } = await supabase.functions.invoke("translate", {
-          body: {
-            texts: textsToTranslate.map((t) => t.text),
-            targetLanguage: "English",
-          },
+          body: { texts: textsToTranslate.map((t) => t.text), targetLanguage: "English" },
         });
 
         if (!error && data?.translations) {
@@ -96,7 +85,6 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
             cachedResults[item.id] = data.translations[index];
           });
         }
-
         setTranslatedDescriptions(cachedResults);
       } catch (error) {
         console.error("Translation error:", error);
@@ -113,141 +101,107 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
     setCurrentPage(1);
   };
 
-  const clearDateFilter = () => {
-    setSelectedDate(undefined);
-    setCurrentPage(1);
-  };
-
   const getDescription = (reading: SchumannReading) => {
     if (language === "en" && translatedDescriptions[reading.id]) {
       return translatedDescriptions[reading.id];
     }
-    return truncateText(reading.descripcionTecnica, 160);
+    return truncateText(reading.descripcionTecnica, 100);
   };
 
   return (
     <>
-      <div className="space-y-6 animate-in fade-in-50 duration-500">
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-2">
-            <Calendar className="h-6 w-6 text-primary" />
-            <h2 className="text-2xl font-bold text-foreground">{t.history.title}</h2>
-          </div>
-
+      <div className="space-y-6 max-w-3xl mx-auto">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <h2 className="text-2xl font-display font-light text-foreground">{t.history.title}</h2>
           <div className="flex items-center gap-2">
             <Popover>
               <PopoverTrigger asChild>
-                <Button
-                  variant="outline"
-                  className={cn(
-                    "justify-start text-left font-normal",
-                    !selectedDate && "text-muted-foreground"
-                  )}
-                >
+                <Button variant="outline" size="sm" className={cn("text-sm", !selectedDate && "text-muted-foreground")}>
                   <Calendar className="mr-2 h-4 w-4" />
                   {selectedDate ? format(selectedDate, "d MMM yyyy", { locale: dateLocale }) : t.history.searchByDate}
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="end">
-                <CalendarComponent
-                  mode="single"
-                  selected={selectedDate}
-                  onSelect={handleDateSelect}
-                  initialFocus
-                  className={cn("p-3 pointer-events-auto")}
-                  locale={dateLocale}
-                />
+                <CalendarComponent mode="single" selected={selectedDate} onSelect={handleDateSelect} initialFocus className="p-3 pointer-events-auto" locale={dateLocale} />
               </PopoverContent>
             </Popover>
             {selectedDate && (
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={clearDateFilter}
-                className="h-9 w-9"
-              >
+              <Button variant="ghost" size="icon" onClick={() => { setSelectedDate(undefined); setCurrentPage(1); }} className="h-8 w-8">
                 <X className="h-4 w-4" />
               </Button>
             )}
           </div>
         </div>
 
-        <div className="text-sm text-muted-foreground mb-4">
-          {selectedDate ? (
-            <span>
-              {t.history.showingReadingsFor} {format(selectedDate, language === "es" ? "d 'de' MMMM 'de' yyyy" : "MMMM d, yyyy", { locale: dateLocale })}
-            </span>
-          ) : (
-            <span>{t.history.showingAllReadings}</span>
-          )}
-        </div>
+        <p className="text-sm text-muted-foreground">
+          {selectedDate
+            ? `${t.history.showingReadingsFor} ${format(selectedDate, language === "es" ? "d 'de' MMMM 'de' yyyy" : "MMMM d, yyyy", { locale: dateLocale })}`
+            : t.history.showingAllReadings}
+        </p>
 
         {filteredReadings.length === 0 ? (
           <Card>
             <CardContent className="pt-6">
-              <p className="text-muted-foreground text-center">
-                {t.states.noHistoricalReadings}
-              </p>
+              <p className="text-muted-foreground text-center">{t.states.noHistoricalReadings}</p>
             </CardContent>
           </Card>
         ) : (
           <>
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {paginatedReadings.map((reading) => (
-                  <Card
+            {/* Timeline */}
+            <div className="relative">
+              {/* Vertical line */}
+              <div className="absolute left-4 top-0 bottom-0 w-px bg-border" />
+
+              <div className="space-y-1">
+                {paginatedReadings.map((reading) => (
+                  <button
                     key={reading.id}
-                    className="cursor-pointer transition-all hover:shadow-lg hover:border-primary/50 hover:-translate-y-1"
                     onClick={() => setSelectedReading(reading)}
+                    className="relative w-full flex items-start gap-4 pl-10 pr-3 py-4 rounded-xl text-left transition-all hover:bg-card/80 group"
                   >
-                    <CardHeader>
-                      <div className="flex items-start justify-between gap-2">
-                        <CardTitle className="text-lg">
+                    {/* Dot on timeline */}
+                    <div className="absolute left-[11px] top-5 h-2.5 w-2.5 rounded-full bg-primary ring-4 ring-background" />
+
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-3 mb-1">
+                        <span className="text-sm font-display font-medium text-foreground">
                           {format(new Date(reading.date), "d MMM yyyy", { locale: dateLocale })}
-                        </CardTitle>
+                        </span>
                         <BadgeNivelActividad nivel={reading.nivelActividad} />
                       </div>
-                    </CardHeader>
-                    <CardContent>
                       {isTranslating && language === "en" ? (
-                        <div className="space-y-2">
-                          <Skeleton className="h-4 w-full" />
-                          <Skeleton className="h-4 w-3/4" />
-                        </div>
+                        <Skeleton className="h-4 w-3/4" />
                       ) : (
-                        <CardDescription className="text-sm leading-relaxed">
+                        <p className="text-sm text-muted-foreground line-clamp-2 group-hover:text-foreground transition-colors">
                           {getDescription(reading)}
-                        </CardDescription>
+                        </p>
                       )}
-                    </CardContent>
-                  </Card>
-              ))}
+                    </div>
+                  </button>
+                ))}
+              </div>
             </div>
 
             {totalPages > 1 && (
               <Pagination className="mt-6">
                 <PaginationContent>
                   <PaginationItem>
-                    <PaginationPrevious 
-                      onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                    <PaginationPrevious
+                      onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
                       className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                     />
                   </PaginationItem>
-                  
                   {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
                     <PaginationItem key={page}>
-                      <PaginationLink
-                        onClick={() => setCurrentPage(page)}
-                        isActive={currentPage === page}
-                        className="cursor-pointer"
-                      >
+                      <PaginationLink onClick={() => setCurrentPage(page)} isActive={currentPage === page} className="cursor-pointer">
                         {page}
                       </PaginationLink>
                     </PaginationItem>
                   ))}
-                  
                   <PaginationItem>
-                    <PaginationNext 
-                      onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                    <PaginationNext
+                      onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
                       className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
                     />
                   </PaginationItem>
@@ -261,7 +215,7 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
       <Dialog open={!!selectedReading} onOpenChange={() => setSelectedReading(null)}>
         <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{t.history.readingDetail}</DialogTitle>
+            <DialogTitle className="font-display">{t.history.readingDetail}</DialogTitle>
           </DialogHeader>
           {selectedReading && <TodayView reading={selectedReading} />}
         </DialogContent>

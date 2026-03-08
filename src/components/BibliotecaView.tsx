@@ -1,4 +1,4 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { BookOpen, Info, TrendingUp, AlertCircle } from "lucide-react";
 import schumannGraphExample from "@/assets/schumann-graph-example.png";
 import { useLanguage } from "@/i18n/LanguageContext";
@@ -7,301 +7,178 @@ export const BibliotecaView = () => {
   const { t } = useLanguage();
 
   return (
-    <div className="space-y-6 animate-in fade-in-50 duration-500">
-      <div className="flex items-center gap-2 mb-6">
-        <BookOpen className="h-6 w-6 text-primary" />
-        <h2 className="text-2xl font-bold text-foreground">{t.library.title}</h2>
-      </div>
+    <div className="space-y-6 max-w-3xl mx-auto">
+      <h2 className="text-2xl font-display font-light text-foreground">{t.library.title}</h2>
 
-      {/* Historia */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-5 w-5 text-primary" />
-            <CardTitle>{t.library.history.title}</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-card-foreground leading-relaxed">{t.library.history.p1}</p>
-          <p className="text-card-foreground leading-relaxed">{t.library.history.p2}</p>
-        </CardContent>
-      </Card>
-
-      {/* ¿Qué es la Resonancia Schumann? */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <Info className="h-5 w-5 text-primary" />
-            <CardTitle>{t.library.whatIs.title}</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-card-foreground leading-relaxed">{t.library.whatIs.intro}</p>
-
-          <p className="text-card-foreground leading-relaxed mt-4">
-            {t.library.whatIs.frequency} <strong>7.83 Hz</strong>. {t.library.whatIs.frequencyNote}{" "}
-            <strong>14.07 Hz</strong>, <strong>20.25 Hz</strong>, <strong>26.41 Hz</strong> y{" "}
-            <strong>32.45 Hz</strong>. {t.library.whatIs.frequencyMatch}
-          </p>
-
-          <div className="space-y-3 mt-4">
-            <div>
-              <strong className="text-card-foreground">{t.library.whatIs.naturalRhythms}</strong>
-              <p className="text-card-foreground leading-relaxed mt-1">
-                {t.library.whatIs.naturalRhythmsDesc}
-              </p>
+      <Accordion type="single" collapsible defaultValue="history" className="space-y-3">
+        {/* Historia */}
+        <AccordionItem value="history" className="border rounded-xl px-5 bg-card">
+          <AccordionTrigger className="hover:no-underline">
+            <div className="flex items-center gap-3">
+              <BookOpen className="h-5 w-5 text-primary" />
+              <span className="font-display">{t.library.history.title}</span>
             </div>
+          </AccordionTrigger>
+          <AccordionContent className="space-y-3 text-card-foreground leading-relaxed">
+            <p>{t.library.history.p1}</p>
+            <p>{t.library.history.p2}</p>
+          </AccordionContent>
+        </AccordionItem>
 
-            <div>
-              <strong className="text-card-foreground">{t.library.whatIs.humanConnection}</strong>
-              <p className="text-card-foreground leading-relaxed mt-1">
-                {t.library.whatIs.humanConnectionDesc}
-              </p>
+        {/* ¿Qué es? */}
+        <AccordionItem value="whatIs" className="border rounded-xl px-5 bg-card">
+          <AccordionTrigger className="hover:no-underline">
+            <div className="flex items-center gap-3">
+              <Info className="h-5 w-5 text-primary" />
+              <span className="font-display">{t.library.whatIs.title}</span>
             </div>
-
-            <div>
-              <strong className="text-card-foreground">{t.library.whatIs.harmonicBalance}</strong>
-              <p className="text-card-foreground leading-relaxed mt-1">
-                {t.library.whatIs.harmonicBalanceDesc}
-              </p>
+          </AccordionTrigger>
+          <AccordionContent className="space-y-4 text-card-foreground leading-relaxed">
+            <p>{t.library.whatIs.intro}</p>
+            <p>{t.library.whatIs.frequency} <strong>7.83 Hz</strong>. {t.library.whatIs.frequencyNote} <strong>14.07 Hz</strong>, <strong>20.25 Hz</strong>, <strong>26.41 Hz</strong> y <strong>32.45 Hz</strong>. {t.library.whatIs.frequencyMatch}</p>
+            <div className="space-y-3">
+              {(["naturalRhythms", "humanConnection", "harmonicBalance", "spiritualAwakening", "meditativeStates"] as const).map((key) => (
+                <div key={key}>
+                  <strong>{t.library.whatIs[key]}</strong>
+                  <p className="mt-1">{t.library.whatIs[`${key}Desc`]}</p>
+                </div>
+              ))}
             </div>
+          </AccordionContent>
+        </AccordionItem>
 
-            <div>
-              <strong className="text-card-foreground">{t.library.whatIs.spiritualAwakening}</strong>
-              <p className="text-card-foreground leading-relaxed mt-1">
-                {t.library.whatIs.spiritualAwakeningDesc}
-              </p>
+        {/* Frecuencias cerebrales */}
+        <AccordionItem value="brainwaves" className="border rounded-xl px-5 bg-card">
+          <AccordionTrigger className="hover:no-underline">
+            <div className="flex items-center gap-3">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              <span className="font-display">{t.library.brainwaves.title}</span>
             </div>
-
-            <div>
-              <strong className="text-card-foreground">{t.library.whatIs.meditativeStates}</strong>
-              <p className="text-card-foreground leading-relaxed mt-1">
-                {t.library.whatIs.meditativeStatesDesc}
-              </p>
+          </AccordionTrigger>
+          <AccordionContent className="space-y-4 text-card-foreground leading-relaxed">
+            <p>{t.library.brainwaves.intro}</p>
+            <div className="space-y-2">
+              {(["delta", "theta", "alpha", "beta", "gamma"] as const).map((wave) => (
+                <div key={wave}>
+                  <strong>{t.library.brainwaves[wave]}</strong>
+                  <p className="mt-0.5">{t.library.brainwaves[`${wave}Desc`]}</p>
+                </div>
+              ))}
             </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Frecuencias cerebrales */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            <CardTitle>{t.library.brainwaves.title}</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-card-foreground leading-relaxed">{t.library.brainwaves.intro}</p>
-
-          <div className="space-y-3 mt-4">
-            <div>
-              <strong className="text-card-foreground">{t.library.brainwaves.delta}</strong>
-              <p className="text-card-foreground leading-relaxed mt-1">{t.library.brainwaves.deltaDesc}</p>
+            <div className="bg-muted/50 rounded-lg p-4 border border-border">
+              <p className="font-semibold mb-3">{t.library.brainwaves.overlay}</p>
+              <ul className="space-y-1.5">
+                {(["78", "14", "20", "25", "33"] as const).map((f) => (
+                  <li key={f} className="flex items-start gap-2">
+                    <span className="text-primary mt-1">•</span>
+                    <span><strong>{f === "78" ? "7.8" : f === "33" ? "33+" : f} Hz</strong> {t.library.brainwaves[`freq${f}`]}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
+          </AccordionContent>
+        </AccordionItem>
 
-            <div>
-              <strong className="text-card-foreground">{t.library.brainwaves.theta}</strong>
-              <p className="text-card-foreground leading-relaxed mt-1">{t.library.brainwaves.thetaDesc}</p>
+        {/* Efectos */}
+        <AccordionItem value="effects" className="border rounded-xl px-5 bg-card">
+          <AccordionTrigger className="hover:no-underline">
+            <div className="flex items-center gap-3">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              <span className="font-display">{t.library.effects.title}</span>
             </div>
-
+          </AccordionTrigger>
+          <AccordionContent className="space-y-4 text-card-foreground leading-relaxed">
             <div>
-              <strong className="text-card-foreground">{t.library.brainwaves.alpha}</strong>
-              <p className="text-card-foreground leading-relaxed mt-1">{t.library.brainwaves.alphaDesc}</p>
+              <h4 className="font-semibold mb-1">{t.library.effects.environmentalEffects}</h4>
+              <p>{t.library.effects.environmentalEffectsDesc}</p>
             </div>
-
             <div>
-              <strong className="text-card-foreground">{t.library.brainwaves.beta}</strong>
-              <p className="text-card-foreground leading-relaxed mt-1">{t.library.brainwaves.betaDesc}</p>
+              <h4 className="font-semibold mb-1">{t.library.effects.sgmaActivity}</h4>
+              {([1, 2, 3, 4, 5] as const).map((n) => (
+                <p key={n} className="mt-1">{t.library.effects[`sgmaDesc${n}`]}</p>
+              ))}
             </div>
+          </AccordionContent>
+        </AccordionItem>
 
-            <div>
-              <strong className="text-card-foreground">{t.library.brainwaves.gamma}</strong>
-              <p className="text-card-foreground leading-relaxed mt-1">{t.library.brainwaves.gammaDesc}</p>
+        {/* Gráficas */}
+        <AccordionItem value="graphs" className="border rounded-xl px-5 bg-card">
+          <AccordionTrigger className="hover:no-underline">
+            <div className="flex items-center gap-3">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              <span className="font-display">{t.library.graphs.title}</span>
             </div>
-          </div>
-
-          <div className="mt-6 bg-muted/50 rounded-lg p-4 border border-border">
-            <p className="text-card-foreground leading-relaxed font-semibold mb-3">
-              {t.library.brainwaves.overlay}
-            </p>
-            <ul className="space-y-2 text-card-foreground">
-              <li className="flex items-start gap-2">
-                <span className="text-primary mt-1">•</span>
-                <span><strong>7.8 Hz</strong> {t.library.brainwaves.freq78}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary mt-1">•</span>
-                <span><strong>14 Hz</strong> {t.library.brainwaves.freq14}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary mt-1">•</span>
-                <span><strong>20 Hz</strong> {t.library.brainwaves.freq20}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary mt-1">•</span>
-                <span><strong>25 Hz</strong> {t.library.brainwaves.freq25}</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <span className="text-primary mt-1">•</span>
-                <span><strong>33 Hz+</strong> {t.library.brainwaves.freq33}</span>
-              </li>
+          </AccordionTrigger>
+          <AccordionContent className="space-y-4 text-card-foreground leading-relaxed">
+            <ul className="space-y-2">
+              {(["xAxis", "yAxis", "date", "hour", "color"] as const).map((key) => (
+                <li key={key}><strong>{t.library.graphs[key]}</strong> {t.library.graphs[`${key}Desc`]}</li>
+              ))}
             </ul>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Por qué se habla de sus efectos */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            <CardTitle>{t.library.effects.title}</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <h4 className="font-semibold text-card-foreground mb-2">{t.library.effects.environmentalEffects}</h4>
-            <p className="text-card-foreground leading-relaxed">{t.library.effects.environmentalEffectsDesc}</p>
-          </div>
-
-          <div>
-            <h4 className="font-semibold text-card-foreground mb-2">{t.library.effects.sgmaActivity}</h4>
-            <p className="text-card-foreground leading-relaxed">{t.library.effects.sgmaDesc1}</p>
-            <p className="text-card-foreground leading-relaxed mt-2">{t.library.effects.sgmaDesc2}</p>
-            <p className="text-card-foreground leading-relaxed mt-2">{t.library.effects.sgmaDesc3}</p>
-            <p className="text-card-foreground leading-relaxed mt-2">{t.library.effects.sgmaDesc4}</p>
-            <p className="text-card-foreground leading-relaxed mt-2">{t.library.effects.sgmaDesc5}</p>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Cómo leemos estas gráficas */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            <CardTitle>{t.library.graphs.title}</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <ul className="space-y-3 text-card-foreground">
-            <li>
-              <strong>{t.library.graphs.xAxis}</strong> {t.library.graphs.xAxisDesc}
-            </li>
-            <li>
-              <strong>{t.library.graphs.yAxis}</strong> {t.library.graphs.yAxisDesc}
-            </li>
-            <li>
-              <strong>{t.library.graphs.date}</strong> {t.library.graphs.dateDesc}
-            </li>
-            <li>
-              <strong>{t.library.graphs.hour}</strong> {t.library.graphs.hourDesc}
-            </li>
-            <li>
-              <strong>{t.library.graphs.color}</strong> {t.library.graphs.colorDesc}
-            </li>
-          </ul>
-
-          <div className="mt-6">
-            <p className="text-sm text-muted-foreground mb-3">{t.library.graphs.exampleVisual}</p>
-            <img
-              src={schumannGraphExample}
-              alt="Schumann Resonance graph example"
-              className="w-full rounded-lg border border-border"
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Estaciones de monitoreo */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <TrendingUp className="h-5 w-5 text-primary" />
-            <CardTitle>{t.library.stations.title}</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <ul className="space-y-2 text-card-foreground">
-            <li className="flex items-start gap-2">
-              <span className="text-primary mt-1">•</span>
-              <span>Rhode Island</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-primary mt-1">•</span>
-              <span><strong>Tomsk University Rusia</strong> {t.library.stations.tomskNote}</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-primary mt-1">•</span>
-              <span>MIT</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <span className="text-primary mt-1">•</span>
-              <span>Italy</span>
-            </li>
-          </ul>
-        </CardContent>
-      </Card>
-
-      {/* Cultura popular */}
-      <Card>
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <Info className="h-5 w-5 text-primary" />
-            <CardTitle>{t.library.popCulture.title}</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-card-foreground leading-relaxed">{t.library.popCulture.intro}</p>
-
-          <div className="space-y-3 mt-4">
             <div>
-              <strong className="text-card-foreground">{t.library.popCulture.newAge}</strong>
-              <p className="text-card-foreground leading-relaxed mt-1">{t.library.popCulture.newAgeDesc}</p>
+              <p className="text-sm text-muted-foreground mb-3">{t.library.graphs.exampleVisual}</p>
+              <img src={schumannGraphExample} alt="Schumann Resonance graph example" className="w-full rounded-lg border border-border" />
             </div>
+          </AccordionContent>
+        </AccordionItem>
 
-            <div>
-              <strong className="text-card-foreground">{t.library.popCulture.altMedicine}</strong>
-              <p className="text-card-foreground leading-relaxed mt-1">{t.library.popCulture.altMedicineDesc}</p>
+        {/* Estaciones */}
+        <AccordionItem value="stations" className="border rounded-xl px-5 bg-card">
+          <AccordionTrigger className="hover:no-underline">
+            <div className="flex items-center gap-3">
+              <TrendingUp className="h-5 w-5 text-primary" />
+              <span className="font-display">{t.library.stations.title}</span>
             </div>
+          </AccordionTrigger>
+          <AccordionContent className="text-card-foreground leading-relaxed">
+            <ul className="space-y-1.5">
+              <li className="flex items-start gap-2"><span className="text-primary">•</span> Rhode Island</li>
+              <li className="flex items-start gap-2"><span className="text-primary">•</span> <strong>Tomsk University Rusia</strong> {t.library.stations.tomskNote}</li>
+              <li className="flex items-start gap-2"><span className="text-primary">•</span> MIT</li>
+              <li className="flex items-start gap-2"><span className="text-primary">•</span> Italy</li>
+            </ul>
+          </AccordionContent>
+        </AccordionItem>
 
-            <div>
-              <strong className="text-card-foreground">{t.library.popCulture.musicArt}</strong>
-              <p className="text-card-foreground leading-relaxed mt-1">{t.library.popCulture.musicArtDesc}</p>
+        {/* Cultura popular */}
+        <AccordionItem value="popCulture" className="border rounded-xl px-5 bg-card">
+          <AccordionTrigger className="hover:no-underline">
+            <div className="flex items-center gap-3">
+              <Info className="h-5 w-5 text-primary" />
+              <span className="font-display">{t.library.popCulture.title}</span>
             </div>
+          </AccordionTrigger>
+          <AccordionContent className="space-y-4 text-card-foreground leading-relaxed">
+            <p>{t.library.popCulture.intro}</p>
+            {(["newAge", "altMedicine", "musicArt", "filmTv"] as const).map((key) => (
+              <div key={key}>
+                <strong>{t.library.popCulture[key]}</strong>
+                <p className="mt-1">{t.library.popCulture[`${key}Desc`]}</p>
+              </div>
+            ))}
+          </AccordionContent>
+        </AccordionItem>
 
-            <div>
-              <strong className="text-card-foreground">{t.library.popCulture.filmTv}</strong>
-              <p className="text-card-foreground leading-relaxed mt-1">{t.library.popCulture.filmTvDesc}</p>
+        {/* Limitaciones */}
+        <AccordionItem value="limitations" className="border rounded-xl px-5 border-amber-500/30 bg-amber-500/5">
+          <AccordionTrigger className="hover:no-underline">
+            <div className="flex items-center gap-3">
+              <AlertCircle className="h-5 w-5 text-amber-500" />
+              <span className="font-display">{t.library.limitations.title}</span>
             </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Limitaciones */}
-      <Card className="border-amber-500/30 bg-amber-500/5">
-        <CardHeader>
-          <div className="flex items-center gap-2">
-            <AlertCircle className="h-5 w-5 text-amber-500" />
-            <CardTitle>{t.library.limitations.title}</CardTitle>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-card-foreground leading-relaxed">{t.library.limitations.intro}</p>
-
-          <ul className="space-y-2 text-card-foreground list-disc list-inside">
-            <li>{t.library.limitations.point1}</li>
-            <li>{t.library.limitations.point2}</li>
-            <li>{t.library.limitations.point3}</li>
-            <li>{t.library.limitations.point4}</li>
-          </ul>
-
-          <p className="text-card-foreground leading-relaxed italic mt-4">
-            {t.library.limitations.finalNote}
-          </p>
-        </CardContent>
-      </Card>
+          </AccordionTrigger>
+          <AccordionContent className="space-y-3 text-card-foreground leading-relaxed">
+            <p>{t.library.limitations.intro}</p>
+            <ul className="list-disc list-inside space-y-1">
+              <li>{t.library.limitations.point1}</li>
+              <li>{t.library.limitations.point2}</li>
+              <li>{t.library.limitations.point3}</li>
+              <li>{t.library.limitations.point4}</li>
+            </ul>
+            <p className="italic">{t.library.limitations.finalNote}</p>
+          </AccordionContent>
+        </AccordionItem>
+      </Accordion>
     </div>
   );
 };
