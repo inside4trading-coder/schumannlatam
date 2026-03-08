@@ -103,7 +103,8 @@ export const TodayView = ({ reading }: TodayViewProps) => {
       )}
 
       {/* 2-Column Grid for sections */}
-      <div className="grid gap-6 md:grid-cols-2">
+      {sections.some(s => s.show) && (
+      <div className="grid gap-4 md:gap-6 md:grid-cols-2">
         {sections.filter(s => s.show).map(({ key, icon: Icon, title, content, color }) => (
           <Card key={key} className="glass glass-dark">
             <CardHeader className="pb-3">
