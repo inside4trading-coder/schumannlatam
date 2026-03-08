@@ -11,3 +11,6 @@ verify_jwt = false
 
 [functions.newsletter-subscribers]
 verify_jwt = false
+
+[functions.sync-notion-readings]
+verify_jwt = false
