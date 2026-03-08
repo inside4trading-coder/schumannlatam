@@ -1,65 +1,9 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.86.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
-
-interface NotionProperty {
-  type: string;
-  [key: string]: any;
-}
-
-interface NotionPage {
-  id: string;
-  properties: {
-    [key: string]: NotionProperty;
-  };
-}
-
-interface NotionResponse {
-  results: NotionPage[];
-}
-
-interface ReadingData {
-  id: string;
-  date: string;
-  nivelActividad: string;
-  urlImagen: string;
-  descripcionTecnica: string;
-  sensacionesFisicas: string;
-  sensacionesEmocionales: string;
-  recomendaciones: string;
-  textoX: string;
-}
-
-interface ApiResponse {
-  latestReading: ReadingData | null;
-  dailyReadings: ReadingData[];
-}
-
-// Map activity levels to numeric values for averaging
-const activityLevelToNumber = (nivel: string): number => {
-  const normalized = nivel.toLowerCase().trim();
-  if (normalized === 'baja') return 1;
-  if (normalized === 'media') return 2;
-  if (normalized === 'alta') return 3;
-  if (normalized === 'muy alta') return 4;
-  return 2; // Default to media
-};
-
-// Convert numeric average back to activity level
-const numberToActivityLevel = (avg: number): string => {
-  if (avg <= 1.5) return 'Baja';
-  if (avg <= 2.5) return 'Media';
-  if (avg <= 3.5) return 'Alta';
-  return 'Muy alta';
-};
-
-// Extract just the date part (YYYY-MM-DD) from a datetime string
-const extractDateOnly = (dateString: string): string => {
-  if (!dateString) return '';
-  return dateString.split('T')[0];
 };
 
 serve(async (req) => {
@@ -68,171 +12,75 @@ serve(async (req) => {
   }
 
   try {
-    const notionToken = Deno.env.get('NOTION_TOKEN');
-    if (!notionToken) {
-      throw new Error('NOTION_TOKEN no configurado');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY');
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      throw new Error('Missing Supabase config');
     }
 
-    console.log('Llamando a la API de Notion...');
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-    // Calculate date 15 days ago for filtering
-    const fifteenDaysAgo = new Date();
-    fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
-    const filterDate = fifteenDaysAgo.toISOString().split('T')[0];
-    console.log(`Filtrando lecturas desde: ${filterDate}`);
+    console.log('Reading from cache...');
 
-    // Fetch pages from Notion (handles pagination, limited to last 15 days)
-    const allNotionPages: NotionPage[] = [];
-    let hasMore = true;
-    let startCursor: string | undefined = undefined;
+    // Get latest reading (most recent hourly)
+    const { data: latestRows, error: latestError } = await supabase
+      .from('schumann_readings_cache')
+      .select('*')
+      .order('date', { ascending: false })
+      .limit(1);
 
-    while (hasMore) {
-      const requestBody: any = {
-        filter: {
-          property: 'Date',
-          date: {
-            on_or_after: filterDate,
-          },
-        },
-        sorts: [
-          {
-            property: 'Date',
-            direction: 'descending',
-          },
-        ],
-        page_size: 100,
-      };
+    if (latestError) throw latestError;
 
-      if (startCursor) {
-        requestBody.start_cursor = startCursor;
-      }
+    const latestRow = latestRows?.[0] || null;
+    const latestReading = latestRow ? {
+      id: latestRow.id,
+      date: latestRow.date,
+      nivelActividad: latestRow.nivel_actividad,
+      urlImagen: latestRow.url_imagen || '',
+      descripcionTecnica: latestRow.descripcion_tecnica || '',
+      sensacionesFisicas: latestRow.sensaciones_fisicas || '',
+      sensacionesEmocionales: latestRow.sensaciones_emocionales || '',
+      recomendaciones: latestRow.recomendaciones || '',
+      textoX: latestRow.texto_x || '',
+    } : null;
 
-      const response = await fetch(
-        'https://api.notion.com/v1/databases/2bb88e97a96880c08324c9903ee749f0/query',
-        {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${notionToken}`,
-            'Content-Type': 'application/json',
-            'Notion-Version': '2022-06-28',
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
+    // Get today's date to exclude from daily readings
+    const todayDate = latestRow ? latestRow.date.split('T')[0] : '';
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        console.error('Error de Notion API:', response.status, errorText);
-        throw new Error(`Error de Notion API: ${response.status}`);
-      }
+    // Get daily aggregations excluding today
+    const { data: dailyRows, error: dailyError } = await supabase
+      .from('schumann_daily_cache')
+      .select('*')
+      .order('date_key', { ascending: false });
 
-      const data = await response.json();
-      allNotionPages.push(...data.results);
-      
-      hasMore = data.has_more;
-      startCursor = data.next_cursor;
-      
-      console.log(`Obtenidas ${data.results.length} lecturas (total: ${allNotionPages.length})`);
-    }
+    if (dailyError) throw dailyError;
 
-    console.log(`Total de lecturas obtenidas de Notion: ${allNotionPages.length}`);
+    const dailyReadings = (dailyRows || [])
+      .filter(row => row.date_key !== todayDate)
+      .map(row => ({
+        id: `daily-${row.date_key}`,
+        date: row.date_key,
+        nivelActividad: row.nivel_actividad,
+        urlImagen: row.url_imagen || '',
+        descripcionTecnica: row.descripcion_tecnica || '',
+        sensacionesFisicas: row.sensaciones_fisicas || '',
+        sensacionesEmocionales: row.sensaciones_emocionales || '',
+        recomendaciones: row.recomendaciones || '',
+        textoX: row.texto_x || '',
+      }));
 
-    // Función auxiliar para extraer texto de rich_text
-    const extractText = (richText: any[]): string => {
-      if (!richText || !Array.isArray(richText)) return '';
-      return richText.map((t: any) => t.plain_text || '').join('');
-    };
+    console.log(`Returning latest reading + ${dailyReadings.length} daily readings from cache`);
 
-    // Transform Notion data to readings
-    const allReadings: ReadingData[] = allNotionPages.map((page: NotionPage) => {
-      const props = page.properties;
-
-      return {
-        id: page.id,
-        date: props['Date']?.date?.start || '',
-        nivelActividad: props['Nivel de actividad']?.select?.name || 'Media',
-        urlImagen: props['URL Imagen']?.url || '',
-        descripcionTecnica: extractText(props['Descripción tecnica']?.rich_text),
-        sensacionesFisicas: extractText(props['Sensaciones fisicas']?.rich_text),
-        sensacionesEmocionales: extractText(props['Sensaciones emocionales']?.rich_text),
-        recomendaciones: extractText(props['Recomendaciones']?.rich_text),
-        textoX: extractText(props['Texto para X']?.rich_text),
-      };
-    });
-
-    // Get the latest hourly reading (first one since sorted descending)
-    const latestReading = allReadings.length > 0 ? allReadings[0] : null;
-    console.log(`Lectura más reciente: ${latestReading?.date}`);
-
-    // Group readings by date (YYYY-MM-DD) for daily aggregation
-    const readingsByDate: Map<string, ReadingData[]> = new Map();
-    
-    for (const reading of allReadings) {
-      const dateOnly = extractDateOnly(reading.date);
-      if (!dateOnly) continue;
-      
-      if (!readingsByDate.has(dateOnly)) {
-        readingsByDate.set(dateOnly, []);
-      }
-      readingsByDate.get(dateOnly)!.push(reading);
-    }
-
-    console.log(`Agrupadas en ${readingsByDate.size} días`);
-
-    // Create daily aggregated readings
-    const dailyReadings: ReadingData[] = [];
-    
-    for (const [dateOnly, dayReadings] of readingsByDate) {
-      // Calculate average activity level
-      const activitySum = dayReadings.reduce((sum, r) => sum + activityLevelToNumber(r.nivelActividad), 0);
-      const avgActivity = activitySum / dayReadings.length;
-      const aggregatedActivityLevel = numberToActivityLevel(avgActivity);
-      
-      // Use the most recent reading of the day for other fields (first one since sorted descending)
-      const latestDayReading = dayReadings[0];
-      
-      // Find reading with best content (prefer ones with image and description)
-      const bestReading = dayReadings.find(r => r.urlImagen && r.descripcionTecnica) || latestDayReading;
-      
-      dailyReadings.push({
-        id: `daily-${dateOnly}`,
-        date: dateOnly, // Use just the date without time
-        nivelActividad: aggregatedActivityLevel,
-        urlImagen: bestReading.urlImagen,
-        descripcionTecnica: bestReading.descripcionTecnica,
-        sensacionesFisicas: bestReading.sensacionesFisicas,
-        sensacionesEmocionales: bestReading.sensacionesEmocionales,
-        recomendaciones: bestReading.recomendaciones,
-        textoX: bestReading.textoX,
-      });
-    }
-
-    // Sort by date descending
-    dailyReadings.sort((a, b) => b.date.localeCompare(a.date));
-
-    // Remove today from daily readings since it's shown in "Hoy" section
-    const todayDate = latestReading ? extractDateOnly(latestReading.date) : '';
-    const historicDailyReadings = dailyReadings.filter(r => r.date !== todayDate);
-
-    console.log(`Devolviendo lectura actual + ${historicDailyReadings.length} lecturas diarias históricas`);
-
-    const apiResponse: ApiResponse = {
-      latestReading,
-      dailyReadings: historicDailyReadings,
-    };
-
-    return new Response(JSON.stringify(apiResponse), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
-  } catch (error) {
-    console.error('Error en edge function:', error);
-    const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
     return new Response(
-      JSON.stringify({ error: errorMessage }),
-      {
-        status: 500,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      }
+      JSON.stringify({ latestReading, dailyReadings }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
+  } catch (error) {
+    console.error('Error:', error);
+    return new Response(
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Unknown error' }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
 });
