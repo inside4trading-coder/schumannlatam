@@ -57,23 +57,23 @@ export const TodayView = ({ reading }: TodayViewProps) => {
     { key: "emot", icon: Brain, title: t.today.emotionalSensations, content: sensacionesEmocionales, show: !!reading.sensacionesEmocionales, color: "text-primary" },
   ];
 
+  const visibleSections = sections.filter(s => s.show);
+
   return (
-    <div className="space-y-8 max-w-5xl mx-auto">
+    <div className="space-y-6 md:space-y-8 max-w-5xl mx-auto">
       {/* Hero Card */}
       <Card className="overflow-hidden border-0 shadow-lg gradient-cosmic-subtle">
         <CardContent className="p-0">
           <div className="flex flex-col md:flex-row">
-            {/* Image */}
             {reading.urlImagen && (
               <div className="md:w-1/2">
                 <img
                   src={reading.urlImagen}
                   alt={`Resonancia Schumann - ${reading.date}`}
-                  className="w-full h-56 md:h-full object-cover"
+                  className="w-full h-48 md:h-full object-cover"
                 />
               </div>
             )}
-            {/* Date & Badge */}
             <div className={`flex flex-col justify-center p-6 md:p-8 ${reading.urlImagen ? "md:w-1/2" : "w-full"}`}>
               <p className="text-sm uppercase tracking-widest text-muted-foreground font-medium mb-2">
                 {t.today.readingOfDay}
@@ -87,7 +87,6 @@ export const TodayView = ({ reading }: TodayViewProps) => {
         </CardContent>
       </Card>
 
-      {/* Data Updating Notice */}
       {!hasDetailedData && (
         <Card className="border-amber-500/30 bg-amber-500/10">
           <CardHeader>
@@ -102,24 +101,24 @@ export const TodayView = ({ reading }: TodayViewProps) => {
         </Card>
       )}
 
-      {/* 2-Column Grid for sections */}
-      <div className="grid gap-6 md:grid-cols-2">
-        {sections.filter(s => s.show).map(({ key, icon: Icon, title, content, color }) => (
-          <Card key={key} className="glass glass-dark">
-            <CardHeader className="pb-3">
-              <div className="flex items-center gap-3">
-                <div className={`h-10 w-10 rounded-xl flex items-center justify-center gradient-cosmic-subtle`}>
-                  <Icon className={`h-5 w-5 ${color}`} />
+      {visibleSections.length > 0 && (
+        <div className="grid gap-4 md:gap-6 md:grid-cols-2">
+          {visibleSections.map(({ key, icon: Icon, title, content, color }) => (
+            <Card key={key} className="glass glass-dark">
+              <CardHeader className="pb-3">
+                <div className="flex items-center gap-3">
+                  <div className="h-10 w-10 rounded-xl flex items-center justify-center gradient-cosmic-subtle">
+                    <Icon className={`h-5 w-5 ${color}`} />
+                  </div>
+                  <CardTitle className="text-lg font-display">{title}</CardTitle>
                 </div>
-                <CardTitle className="text-lg font-display">{title}</CardTitle>
-              </div>
-            </CardHeader>
-            <CardContent>{renderContent(content, isTranslating)}</CardContent>
-          </Card>
-        ))}
-      </div>
+              </CardHeader>
+              <CardContent>{renderContent(content, isTranslating)}</CardContent>
+            </Card>
+          ))}
+        </div>
+      )}
 
-      {/* Recommendations - Full width accent bar */}
       {reading.recomendaciones && (
         <Card className="glass glass-dark overflow-hidden">
           <div className="flex">
@@ -139,7 +138,6 @@ export const TodayView = ({ reading }: TodayViewProps) => {
         </Card>
       )}
 
-      {/* Disclaimer */}
       <p className="text-xs text-muted-foreground text-center italic max-w-2xl mx-auto">
         {t.today.disclaimer}
       </p>
