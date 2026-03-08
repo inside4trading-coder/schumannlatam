@@ -24,15 +24,15 @@ const Index = () => {
         <div className="container mx-auto px-4 py-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
+              <div>
+                <h1 className="text-3xl font-bold text-foreground">{t.header.title}</h1>
+                <p className="text-sm text-muted-foreground mt-1">{t.header.subtitle}</p>
+              </div>
               <img
                 src={schumannLogo}
                 alt="Resonancia Schumann Logo"
                 className="h-16 sm:h-32 md:h-36 lg:h-40 w-auto object-contain transition-transform duration-300 hover:scale-110 cursor-pointer"
               />
-              <div>
-                <h1 className="text-3xl font-bold text-foreground">{t.header.title}</h1>
-                <p className="text-sm text-muted-foreground mt-1">{t.header.subtitle}</p>
-              </div>
             </div>
             <div className="flex items-center gap-2">
               <NewsletterSubscribeCompact />
