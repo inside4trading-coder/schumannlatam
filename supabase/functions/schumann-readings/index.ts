@@ -75,13 +75,25 @@ serve(async (req) => {
 
     console.log('Llamando a la API de Notion...');
 
-    // Fetch all pages from Notion (handles pagination)
+    // Calculate date 15 days ago for filtering
+    const fifteenDaysAgo = new Date();
+    fifteenDaysAgo.setDate(fifteenDaysAgo.getDate() - 15);
+    const filterDate = fifteenDaysAgo.toISOString().split('T')[0];
+    console.log(`Filtrando lecturas desde: ${filterDate}`);
+
+    // Fetch pages from Notion (handles pagination, limited to last 15 days)
     const allNotionPages: NotionPage[] = [];
     let hasMore = true;
     let startCursor: string | undefined = undefined;
 
     while (hasMore) {
       const requestBody: any = {
+        filter: {
+          property: 'Date',
+          date: {
+            on_or_after: filterDate,
+          },
+        },
         sorts: [
           {
             property: 'Date',
