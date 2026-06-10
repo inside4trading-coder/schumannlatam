@@ -1,0 +1,9 @@
+# Resonancia Schumann
+
+> Lecturas, gráficos e interpretación diaria de la Resonancia Schumann en español. La frecuencia electromagnética natural de la Tierra, explicada para la comunidad hispanohablante.
+
+El sitio publica la lectura más reciente de la Resonancia Schumann, un histórico de los últimos días, una biblioteca de contenido educativo sobre la frecuencia de la Tierra y agradecimientos a las fuentes de datos.
+
+## Pages
+
+- [Inicio](/): Lectura diaria actual, histórico, biblioteca y agradecimientos.
