@@ -41,14 +41,18 @@ const Index = () => {
 
       {/* Hero Header */}
       <header className="relative overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
-        <div className="container mx-auto px-4 py-8 md:py-12 flex flex-col items-center text-center">
+        <div className="container mx-auto px-4 py-6 sm:py-8 md:py-12 flex flex-col items-center text-center">
           <img
             src={schumannLogo}
             alt="Resonancia Schumann Logo"
-            className="h-20 sm:h-28 md:h-32 w-auto object-contain animate-pulse-glow mb-4"
+            className="h-16 sm:h-24 md:h-32 w-auto object-contain animate-pulse-glow mb-3 sm:mb-4"
           />
-          <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-light tracking-tight text-foreground">
-            {t.header.title} <span className="text-muted-foreground font-light">— {t.header.subtitle}</span>
+          <h1 className="text-2xl sm:text-4xl md:text-5xl font-display font-light tracking-tight text-foreground leading-tight">
+            <span className="block sm:inline">{t.header.title}</span>
+            <span className="hidden sm:inline text-muted-foreground font-light"> — </span>
+            <span className="block sm:inline text-base sm:text-4xl md:text-5xl text-muted-foreground font-light mt-1 sm:mt-0">
+              {t.header.subtitle}
+            </span>
           </h1>
         </div>
       </header>
@@ -111,20 +115,20 @@ const Index = () => {
 
       {/* Mobile Bottom Nav */}
       <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-card/90 backdrop-blur-xl safe-area-inset-bottom">
-        <div className="flex items-center justify-around px-2 py-2">
+        <div className="grid grid-cols-4 px-1 py-1.5">
           {navItems.map(({ id, label, icon: Icon }) => (
             <button
               key={id}
               onClick={() => setActiveView(id)}
               className={cn(
-                "flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-lg transition-all text-xs",
-                activeView === id
-                  ? "text-primary"
-                  : "text-muted-foreground"
+                "flex flex-col items-center justify-start gap-0.5 px-1 py-1.5 rounded-lg transition-all",
+                activeView === id ? "text-primary" : "text-muted-foreground"
               )}
             >
-              <Icon className={cn("h-5 w-5", activeView === id && "drop-shadow-sm")} />
-              <span className="font-medium truncate max-w-[4.5rem]">{label}</span>
+              <Icon className={cn("h-5 w-5 flex-shrink-0", activeView === id && "drop-shadow-sm")} />
+              <span className="text-[10px] font-medium leading-tight text-center break-words">
+                {label}
+              </span>
             </button>
           ))}
         </div>
