@@ -48,11 +48,10 @@ const Index = () => {
             className="h-20 sm:h-28 md:h-32 w-auto object-contain animate-pulse-glow mb-4"
           />
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-display font-light tracking-tight text-foreground">
-            {t.header.title}
+            {t.header.title} <span className="text-muted-foreground font-light">— {t.header.subtitle}</span>
           </h1>
-          <p className="text-sm sm:text-base text-muted-foreground mt-2 font-light">
-            {t.header.subtitle}
-          </p>
+        </div>
+      </header>
         </div>
       </header>
 
