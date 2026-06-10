@@ -10,6 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { ArrowLeft, Send, Users, Mail, Loader2, RefreshCw } from "lucide-react";
+import { useSeo } from "@/hooks/useSeo";
 
 interface Subscriber {
   id: string;
@@ -20,6 +21,12 @@ interface Subscriber {
 }
 
 const AdminNewsletter = () => {
+  useSeo({
+    title: "Admin Newsletter — Resonancia Schumann",
+    description: "Panel interno de administración del newsletter de Resonancia Schumann.",
+    canonical: "https://schumannlatam.lovable.app/admin/newsletter",
+    noindex: true,
+  });
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
