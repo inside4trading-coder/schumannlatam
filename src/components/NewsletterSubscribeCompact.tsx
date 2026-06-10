@@ -75,11 +75,12 @@ export const NewsletterSubscribeCompact = () => {
           size="icon"
           className="relative"
           title={language === "es" ? "Suscribirse al Newsletter" : "Subscribe to Newsletter"}
+          aria-label={language === "es" ? "Suscribirse al Newsletter" : "Subscribe to Newsletter"}
         >
-          <Mail className="h-5 w-5" />
+          <Mail className="h-5 w-5" aria-hidden="true" />
           {isSubscribed && (
             <span className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-primary flex items-center justify-center">
-              <CheckCircle className="h-2 w-2 text-primary-foreground" />
+              <CheckCircle className="h-2 w-2 text-primary-foreground" aria-hidden="true" />
             </span>
           )}
         </Button>
