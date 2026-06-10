@@ -9,6 +9,7 @@ import { LanguageProvider } from "@/i18n/LanguageContext";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import AdminNewsletter from "./pages/AdminNewsletter";
+import SolarActivity from "./pages/SolarActivity";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +24,7 @@ const App = () => (
             <Routes>
               <Route path="/" element={<Index />} />
               <Route path="/admin/newsletter" element={<AdminNewsletter />} />
+              <Route path="/solar-activity" element={<SolarActivity />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </BrowserRouter>
