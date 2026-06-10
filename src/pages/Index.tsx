@@ -52,8 +52,6 @@ const Index = () => {
           </h1>
         </div>
       </header>
-        </div>
-      </header>
 
       {/* Desktop Nav */}
       <nav className="hidden md:block sticky top-0 z-40 border-b border-border/50 bg-card/80 backdrop-blur-xl">
