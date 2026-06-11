@@ -121,6 +121,45 @@
 }
 
 @layer utilities {
+  /* Onda EM del hero: desplazamiento horizontal en bucle */
+  .schumann-wave {
+    will-change: transform;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .schumann-wave-1 {
+      animation: schumann-drift 14s linear infinite;
+    }
+    .schumann-wave-2 {
+      animation: schumann-drift 9s linear infinite;
+    }
+    .schumann-wave-3 {
+      animation: schumann-drift 6s linear infinite;
+    }
+  }
+
+  @keyframes schumann-drift {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-1440px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
   .glass {
     @apply bg-card/70 backdrop-blur-xl border border-border/50;
   }

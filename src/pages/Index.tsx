@@ -8,6 +8,7 @@ import { HistoricoView } from "@/components/HistoricoView";
 import { BibliotecaView } from "@/components/BibliotecaView";
 import { FaqSection } from "@/components/FaqSection";
 import { AgradecimientosView } from "@/components/AgradecimientosView";
+import { Reveal } from "@/components/Reveal";
 import { NewsletterSubscribeCompact } from "@/components/NewsletterSubscribeCompact";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageToggle } from "@/components/LanguageToggle";
@@ -144,13 +145,19 @@ const Index = () => {
               aria-label={t.dashboard.activityChartTitle}
               className="scroll-mt-16 container mx-auto px-4 py-4 space-y-4 md:space-y-6"
             >
-              <SpectrogramCard reading={latestReading} />
-              <ActivityChart latestReading={latestReading} dailyReadings={dailyReadings} />
+              <Reveal>
+                <SpectrogramCard reading={latestReading} />
+              </Reveal>
+              <Reveal delayS={0.1}>
+                <ActivityChart latestReading={latestReading} dailyReadings={dailyReadings} />
+              </Reveal>
             </section>
 
             {/* 3. Informe del día */}
             <div className="container mx-auto px-4 py-8 max-w-5xl">
-              <DailyReport reading={latestReading} />
+              <Reveal>
+                <DailyReport reading={latestReading} />
+              </Reveal>
             </div>
 
             {/* 4. Histórico */}

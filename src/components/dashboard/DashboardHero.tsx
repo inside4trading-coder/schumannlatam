@@ -10,6 +10,8 @@ import {
   ActivityLevel,
 } from "@/lib/activity";
 import { cn } from "@/lib/utils";
+import { WaveAnimation } from "./WaveAnimation";
+import { AnimatedNumber } from "./AnimatedNumber";
 
 interface DashboardHeroProps {
   reading: SchumannReading;
@@ -44,8 +46,9 @@ export const DashboardHero = ({ reading }: DashboardHeroProps) => {
   return (
     <section id="estado" aria-label={t.dashboard.currentState} className="scroll-mt-16">
       <div className="container mx-auto px-4 pt-6 pb-4 sm:pt-8 sm:pb-6">
-        <div className="rounded-2xl border border-border/60 bg-card/60 backdrop-blur-sm p-5 sm:p-8">
-          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+        <div className="relative rounded-2xl border border-border/60 bg-card/60 backdrop-blur-sm p-5 sm:p-8 overflow-hidden">
+          <WaveAnimation />
+          <div className="relative flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
             {/* Estado actual */}
             <div>
               <div className="flex items-center gap-2 mb-2">
@@ -88,7 +91,8 @@ export const DashboardHero = ({ reading }: DashboardHeroProps) => {
                   {t.dashboard.fundamentalLabel}
                 </dt>
                 <dd className="mt-1 text-xl sm:text-2xl font-display tabular-nums text-foreground">
-                  7.83 <span className="text-sm text-muted-foreground">Hz</span>
+                  <AnimatedNumber value={7.83} decimals={2} />{" "}
+                  <span className="text-sm text-muted-foreground">Hz</span>
                 </dd>
               </div>
               <div>
