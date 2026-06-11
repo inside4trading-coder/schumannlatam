@@ -3,7 +3,7 @@ import { SchumannReading } from "@/types/schumann";
 import { BadgeNivelActividad } from "./BadgeNivelActividad";
 import { Card, CardContent } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Pagination, PaginationContent, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
+import { Pagination, PaginationContent, PaginationEllipsis, PaginationItem, PaginationLink, PaginationNext, PaginationPrevious } from "@/components/ui/pagination";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
@@ -195,13 +195,16 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
                       className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                     />
                   </PaginationItem>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                    <PaginationItem key={page}>
-                      <PaginationLink onClick={() => setCurrentPage(page)} isActive={currentPage === page} className="cursor-pointer">
-                        {page}
-                      </PaginationLink>
-                    </PaginationItem>
-                  ))}
+                  {Array.from({ length: totalPages }, (_, i) => i + 1)
+                    .filter((page) => page === 1 || page === totalPages || Math.abs(page - currentPage) <= 1)
+                    .map((page, index, visible) => (
+                      <PaginationItem key={page}>
+                        {index > 0 && page - visible[index - 1] > 1 && <PaginationEllipsis />}
+                        <PaginationLink onClick={() => setCurrentPage(page)} isActive={currentPage === page} className="cursor-pointer">
+                          {page}
+                        </PaginationLink>
+                      </PaginationItem>
+                    ))}
                   <PaginationItem>
                     <PaginationNext
                       onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}

@@ -1,13 +1,23 @@
-import { useEffect, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useSchumannReadings } from "@/hooks/useSchumannReadings";
 import { DashboardHero } from "@/components/dashboard/DashboardHero";
 import { SpectrogramCard } from "@/components/dashboard/SpectrogramCard";
-import { ActivityChart } from "@/components/dashboard/ActivityChart";
 import { DailyReport } from "@/components/dashboard/DailyReport";
-import { HistoricoView } from "@/components/HistoricoView";
-import { BibliotecaView } from "@/components/BibliotecaView";
 import { FaqSection } from "@/components/FaqSection";
-import { AgradecimientosView } from "@/components/AgradecimientosView";
+
+// Below-the-fold y dependencias pesadas (recharts) en chunks separados
+const ActivityChart = lazy(() =>
+  import("@/components/dashboard/ActivityChart").then((m) => ({ default: m.ActivityChart }))
+);
+const HistoricoView = lazy(() =>
+  import("@/components/HistoricoView").then((m) => ({ default: m.HistoricoView }))
+);
+const BibliotecaView = lazy(() =>
+  import("@/components/BibliotecaView").then((m) => ({ default: m.BibliotecaView }))
+);
+const AgradecimientosView = lazy(() =>
+  import("@/components/AgradecimientosView").then((m) => ({ default: m.AgradecimientosView }))
+);
 import { Reveal } from "@/components/Reveal";
 import { NewsletterSubscribeCompact } from "@/components/NewsletterSubscribeCompact";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -149,7 +159,9 @@ const Index = () => {
                 <SpectrogramCard reading={latestReading} />
               </Reveal>
               <Reveal delayS={0.1}>
-                <ActivityChart latestReading={latestReading} dailyReadings={dailyReadings} />
+                <Suspense fallback={<Skeleton className="h-72 w-full rounded-xl" />}>
+                  <ActivityChart latestReading={latestReading} dailyReadings={dailyReadings} />
+                </Suspense>
               </Reveal>
             </section>
 
@@ -167,7 +179,9 @@ const Index = () => {
               className="scroll-mt-16 border-t border-border/50 bg-card/30"
             >
               <div className="container mx-auto px-4 py-10">
-                <HistoricoView readings={dailyReadings} />
+                <Suspense fallback={<Skeleton className="h-96 w-full max-w-3xl mx-auto rounded-xl" />}>
+                  <HistoricoView readings={dailyReadings} />
+                </Suspense>
               </div>
             </section>
 
@@ -184,7 +198,9 @@ const Index = () => {
                   </h2>
                   <p className="mt-2 text-muted-foreground">{t.dashboard.learnSubtitle}</p>
                 </div>
-                <BibliotecaView />
+                <Suspense fallback={<Skeleton className="h-96 w-full max-w-3xl mx-auto rounded-xl" />}>
+                  <BibliotecaView />
+                </Suspense>
                 <div className="max-w-3xl mx-auto">
                   <FaqSection />
                 </div>
@@ -198,7 +214,9 @@ const Index = () => {
               className="scroll-mt-16 border-t border-border/50 bg-card/30"
             >
               <div className="container mx-auto px-4 py-10">
-                <AgradecimientosView />
+                <Suspense fallback={<Skeleton className="h-72 w-full max-w-3xl mx-auto rounded-xl" />}>
+                  <AgradecimientosView />
+                </Suspense>
               </div>
             </section>
           </>
