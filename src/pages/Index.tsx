@@ -73,9 +73,9 @@ const Index = () => {
               className="h-8 w-8 object-contain flex-shrink-0"
             />
             <div className="min-w-0 leading-tight">
-              <p className="font-display font-medium text-sm sm:text-base text-foreground truncate">
+              <h1 className="font-display font-medium text-sm sm:text-base text-foreground truncate">
                 {t.header.title}
-              </p>
+              </h1>
               <p className="text-[11px] text-muted-foreground truncate hidden sm:block">
                 {t.header.subtitle}
               </p>

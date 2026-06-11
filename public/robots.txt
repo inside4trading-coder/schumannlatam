@@ -14,4 +14,4 @@ User-agent: *
 Allow: /
 Disallow: /admin/
 
-Sitemap: https://schumannlatam.lovable.app/sitemap.xml
+Sitemap: https://schumannlatam.vercel.app/sitemap.xml

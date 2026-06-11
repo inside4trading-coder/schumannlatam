@@ -24,7 +24,7 @@ const AdminNewsletter = () => {
   useSeo({
     title: "Admin Newsletter — Resonancia Schumann",
     description: "Panel interno de administración del newsletter de Resonancia Schumann.",
-    canonical: "https://schumannlatam.lovable.app/admin/newsletter",
+    canonical: "https://schumannlatam.vercel.app/admin/newsletter",
     noindex: true,
   });
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);

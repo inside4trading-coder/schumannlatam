@@ -19,7 +19,7 @@ const SolarActivity = () => {
     description: isEs
       ? "Cómo la actividad solar (tormentas geomagnéticas, viento solar, índice K) influye en la Resonancia Schumann y sus posibles efectos sobre la Tierra y las personas."
       : "How solar activity (geomagnetic storms, solar wind, K-index) influences the Schumann Resonance and its potential effects on Earth and people.",
-    canonical: "https://schumannlatam.lovable.app/solar-activity",
+    canonical: "https://schumannlatam.vercel.app/solar-activity",
   });
 
   const sections = isEs

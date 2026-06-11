@@ -36,11 +36,11 @@
 
     --radius: 1rem;
 
-    /* Custom badge colors */
-    --badge-baja: 160 60% 45%;
-    --badge-media: 45 90% 55%;
-    --badge-alta: 25 95% 55%;
-    --badge-muy-alta: 0 80% 55%;
+    /* Custom badge colors (oscurecidos en modo claro para contraste AA) */
+    --badge-baja: 160 65% 30%;
+    --badge-media: 40 95% 32%;
+    --badge-alta: 25 95% 38%;
+    --badge-muy-alta: 0 75% 44%;
 
     /* Cosmic gradients */
     --gradient-cosmic: linear-gradient(135deg, hsl(245 58% 51%), hsl(270 60% 55%));
@@ -85,6 +85,12 @@
     --border: 240 15% 18%;
     --input: 240 15% 18%;
     --ring: 250 70% 70%;
+
+    /* Badge colors brillantes sobre fondo oscuro (AA) */
+    --badge-baja: 160 60% 55%;
+    --badge-media: 45 90% 60%;
+    --badge-alta: 25 95% 60%;
+    --badge-muy-alta: 0 80% 62%;
 
     --gradient-cosmic: linear-gradient(135deg, hsl(250 70% 70%), hsl(270 55% 65%));
     --gradient-cosmic-subtle: linear-gradient(135deg, hsl(250 70% 70% / 0.12), hsl(270 55% 65% / 0.12));
