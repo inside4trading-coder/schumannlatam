@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSchumannReadings } from "@/hooks/useSchumannReadings";
-import { TodayView } from "@/components/TodayView";
+import { DashboardHero } from "@/components/dashboard/DashboardHero";
+import { SpectrogramCard } from "@/components/dashboard/SpectrogramCard";
+import { ActivityChart } from "@/components/dashboard/ActivityChart";
+import { DailyReport } from "@/components/dashboard/DailyReport";
 import { HistoricoView } from "@/components/HistoricoView";
 import { BibliotecaView } from "@/components/BibliotecaView";
+import { FaqSection } from "@/components/FaqSection";
 import { AgradecimientosView } from "@/components/AgradecimientosView";
 import { NewsletterSubscribeCompact } from "@/components/NewsletterSubscribeCompact";
 import { ThemeToggle } from "@/components/ThemeToggle";
@@ -14,122 +18,206 @@ import schumannLogo from "@/assets/schumann-logo.png";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { cn } from "@/lib/utils";
 
-type View = "today" | "history" | "library" | "acknowledgements";
+const SECTION_IDS = ["estado", "historico", "aprende", "agradecimientos"] as const;
+type SectionId = (typeof SECTION_IDS)[number];
+
+/** Tracks which top-level section is currently in view to highlight the nav. */
+const useActiveSection = (): SectionId => {
+  const [active, setActive] = useState<SectionId>("estado");
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const visible = entries
+          .filter((e) => e.isIntersecting)
+          .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+        if (visible) setActive(visible.target.id as SectionId);
+      },
+      { rootMargin: "-20% 0px -60% 0px" }
+    );
+
+    SECTION_IDS.forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  return active;
+};
 
 const Index = () => {
   const { latestReading, dailyReadings, loading, error } = useSchumannReadings();
   const { t } = useLanguage();
-  const [activeView, setActiveView] = useState<View>("today");
+  const activeSection = useActiveSection();
 
-  const navItems: { id: View; label: string; icon: React.ElementType }[] = [
-    { id: "today", label: t.nav.today, icon: Zap },
-    { id: "history", label: t.nav.history, icon: Clock },
-    { id: "library", label: t.nav.library, icon: BookOpen },
-    { id: "acknowledgements", label: t.nav.acknowledgements, icon: Heart },
+  const navItems: { id: SectionId; label: string; icon: React.ElementType }[] = [
+    { id: "estado", label: t.nav.today, icon: Zap },
+    { id: "historico", label: t.nav.history, icon: Clock },
+    { id: "aprende", label: t.nav.library, icon: BookOpen },
+    { id: "agradecimientos", label: t.nav.acknowledgements, icon: Heart },
   ];
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
-      {/* Top Bar - Controls */}
-      <div className="border-b border-border/50 bg-card/50 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-1.5 flex items-center justify-end gap-1.5">
-          <NewsletterSubscribeCompact />
-          <LanguageToggle />
-          <ThemeToggle />
-        </div>
-      </div>
+      {/* Top bar: branding compacto + controles */}
+      <header className="sticky top-0 z-50 border-b border-border/50 bg-card/80 backdrop-blur-xl">
+        <div className="container mx-auto px-4 h-14 flex items-center justify-between gap-2">
+          <a href="#estado" className="flex items-center gap-2.5 min-w-0">
+            <img
+              src={schumannLogo}
+              alt=""
+              aria-hidden="true"
+              className="h-8 w-8 object-contain flex-shrink-0"
+            />
+            <div className="min-w-0 leading-tight">
+              <p className="font-display font-medium text-sm sm:text-base text-foreground truncate">
+                {t.header.title}
+              </p>
+              <p className="text-[11px] text-muted-foreground truncate hidden sm:block">
+                {t.header.subtitle}
+              </p>
+            </div>
+          </a>
 
-      {/* Hero Header */}
-      <header className="relative overflow-hidden" style={{ background: "var(--gradient-hero)" }}>
-        <div className="container mx-auto px-4 py-6 sm:py-8 md:py-12 flex flex-col items-center text-center">
-          <img
-            src={schumannLogo}
-            alt="Resonancia Schumann Logo"
-            className="h-16 sm:h-24 md:h-32 w-auto object-contain animate-pulse-glow mb-3 sm:mb-4"
-          />
-          <h1 className="text-2xl sm:text-4xl md:text-5xl font-display font-light tracking-tight text-foreground leading-tight">
-            <span className="block sm:inline">{t.header.title}</span>
-            <span className="hidden sm:inline text-muted-foreground font-light"> — </span>
-            <span className="block sm:inline text-base sm:text-4xl md:text-5xl text-muted-foreground font-light mt-1 sm:mt-0">
-              {t.header.subtitle}
-            </span>
-          </h1>
+          {/* Nav desktop (anclas) */}
+          <nav className="hidden md:flex items-center gap-1" aria-label="Principal">
+            {navItems.map(({ id, label }) => (
+              <a
+                key={id}
+                href={`#${id}`}
+                className={cn(
+                  "px-3 py-2 text-sm font-medium rounded-lg transition-colors",
+                  activeSection === id
+                    ? "text-primary bg-primary/10"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {label}
+              </a>
+            ))}
+          </nav>
+
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            <NewsletterSubscribeCompact />
+            <LanguageToggle />
+            <ThemeToggle />
+          </div>
         </div>
       </header>
 
-      {/* Desktop Nav */}
-      <nav className="hidden md:block sticky top-0 z-40 border-b border-border/50 bg-card/80 backdrop-blur-xl">
-        <div className="container mx-auto px-4">
-          <div className="flex items-center justify-center gap-1">
-            {navItems.map(({ id, label, icon: Icon }) => (
-              <button
-                key={id}
-                onClick={() => setActiveView(id)}
-                className={cn(
-                  "flex items-center gap-2 px-5 py-3 text-sm font-medium transition-all border-b-2 -mb-px",
-                  activeView === id
-                    ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:text-foreground hover:border-border"
-                )}
-              >
-                <Icon className="h-4 w-4" />
-                {label}
-              </button>
-            ))}
-          </div>
-        </div>
-      </nav>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-8 flex-1 pb-24 md:pb-8">
+      <main className="flex-1 pb-24 md:pb-12">
         {loading ? (
-          <div className="space-y-4 max-w-3xl mx-auto">
-            <Skeleton className="h-12 w-full" />
-            <Skeleton className="h-64 w-full" />
-            <Skeleton className="h-32 w-full" />
+          <div className="container mx-auto px-4 py-8 space-y-4 max-w-5xl">
+            <Skeleton className="h-40 w-full" />
+            <Skeleton className="h-72 w-full" />
+            <Skeleton className="h-56 w-full" />
           </div>
         ) : error ? (
-          <Card className="border-destructive max-w-xl mx-auto">
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-2 text-destructive">
-                <AlertCircle className="h-5 w-5" />
-                <p className="font-medium">{t.states.loadingError}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ) : !latestReading ? (
-          <Card className="max-w-xl mx-auto">
-            <CardContent className="pt-6">
-              <p className="text-muted-foreground text-center">{t.states.noReadings}</p>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="animate-in fade-in-50 duration-300">
-            {activeView === "today" && <TodayView reading={latestReading} />}
-            {activeView === "history" && <HistoricoView readings={dailyReadings} />}
-            {activeView === "library" && <BibliotecaView />}
-            {activeView === "acknowledgements" && <AgradecimientosView />}
+          <div className="container mx-auto px-4 py-12">
+            <Card className="border-destructive max-w-xl mx-auto">
+              <CardContent className="pt-6">
+                <div className="flex items-center gap-2 text-destructive">
+                  <AlertCircle className="h-5 w-5" />
+                  <p className="font-medium">{t.states.loadingError}</p>
+                </div>
+              </CardContent>
+            </Card>
           </div>
+        ) : !latestReading ? (
+          <div className="container mx-auto px-4 py-12">
+            <Card className="max-w-xl mx-auto">
+              <CardContent className="pt-6">
+                <p className="text-muted-foreground text-center">{t.states.noReadings}</p>
+              </CardContent>
+            </Card>
+          </div>
+        ) : (
+          <>
+            {/* 1. Estado actual */}
+            <DashboardHero reading={latestReading} />
+
+            {/* 2. Gráficos protagonistas */}
+            <section
+              id="graficos"
+              aria-label={t.dashboard.activityChartTitle}
+              className="scroll-mt-16 container mx-auto px-4 py-4 space-y-4 md:space-y-6"
+            >
+              <SpectrogramCard reading={latestReading} />
+              <ActivityChart latestReading={latestReading} dailyReadings={dailyReadings} />
+            </section>
+
+            {/* 3. Informe del día */}
+            <div className="container mx-auto px-4 py-8 max-w-5xl">
+              <DailyReport reading={latestReading} />
+            </div>
+
+            {/* 4. Histórico */}
+            <section
+              id="historico"
+              aria-label={t.dashboard.historyTitle}
+              className="scroll-mt-16 border-t border-border/50 bg-card/30"
+            >
+              <div className="container mx-auto px-4 py-10">
+                <HistoricoView readings={dailyReadings} />
+              </div>
+            </section>
+
+            {/* 5. Capa educativa */}
+            <section
+              id="aprende"
+              aria-label={t.dashboard.learnTitle}
+              className="scroll-mt-16 border-t border-border/50"
+            >
+              <div className="container mx-auto px-4 py-10 space-y-10">
+                <div className="max-w-3xl mx-auto text-center">
+                  <h2 className="text-2xl sm:text-3xl font-display font-light text-foreground">
+                    {t.dashboard.learnTitle}
+                  </h2>
+                  <p className="mt-2 text-muted-foreground">{t.dashboard.learnSubtitle}</p>
+                </div>
+                <BibliotecaView />
+                <div className="max-w-3xl mx-auto">
+                  <FaqSection />
+                </div>
+              </div>
+            </section>
+
+            {/* 6. Agradecimientos */}
+            <section
+              id="agradecimientos"
+              aria-label={t.nav.acknowledgements}
+              className="scroll-mt-16 border-t border-border/50 bg-card/30"
+            >
+              <div className="container mx-auto px-4 py-10">
+                <AgradecimientosView />
+              </div>
+            </section>
+          </>
         )}
       </main>
 
-      {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-card/90 backdrop-blur-xl safe-area-inset-bottom">
+      {/* Nav móvil inferior (anclas) */}
+      <nav
+        className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-card/90 backdrop-blur-xl safe-area-inset-bottom"
+        aria-label="Principal"
+      >
         <div className="grid grid-cols-4 px-1 py-1.5">
           {navItems.map(({ id, label, icon: Icon }) => (
-            <button
+            <a
               key={id}
-              onClick={() => setActiveView(id)}
+              href={`#${id}`}
               className={cn(
-                "flex flex-col items-center justify-start gap-0.5 px-1 py-1.5 rounded-lg transition-all",
-                activeView === id ? "text-primary" : "text-muted-foreground"
+                "flex flex-col items-center justify-start gap-0.5 px-1 py-1.5 rounded-lg transition-colors",
+                activeSection === id ? "text-primary" : "text-muted-foreground"
               )}
             >
-              <Icon className={cn("h-5 w-5 flex-shrink-0", activeView === id && "drop-shadow-sm")} />
+              <Icon className={cn("h-5 w-5 flex-shrink-0", activeSection === id && "drop-shadow-sm")} />
               <span className="text-[10px] font-medium leading-tight text-center break-words">
                 {label}
               </span>
-            </button>
+            </a>
           ))}
         </div>
       </nav>

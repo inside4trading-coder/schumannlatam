@@ -45,11 +45,14 @@ export const HistoricoView = ({ readings }: HistoricoViewProps) => {
 
   const totalPages = Math.ceil(filteredReadings.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedReadings = filteredReadings.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const paginatedReadings = useMemo(
+    () => filteredReadings.slice(startIndex, startIndex + ITEMS_PER_PAGE),
+    [filteredReadings, startIndex]
+  );
 
   useEffect(() => {
     if (language !== "en" || paginatedReadings.length === 0) {
-      setTranslatedDescriptions({});
+      setTranslatedDescriptions((prev) => (Object.keys(prev).length ? {} : prev));
       return;
     }
 
