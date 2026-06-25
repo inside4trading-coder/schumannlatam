@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from "react";
+﻿import { lazy, Suspense, useEffect, useState } from "react";
 import { useSchumannReadings } from "@/hooks/useSchumannReadings";
 import { DashboardHero } from "@/components/dashboard/DashboardHero";
 import { SpectrogramCard } from "@/components/dashboard/SpectrogramCard";
@@ -24,7 +24,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { LanguageToggle } from "@/components/LanguageToggle";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { AlertCircle, Zap, Clock, BookOpen, Heart } from "lucide-react";
+import { AlertCircle, Zap, Clock, BookOpen, Heart, Waves } from "lucide-react";
 import schumannLogo from "@/assets/schumann-logo.png";
 import { useLanguage } from "@/i18n/LanguageContext";
 import { cn } from "@/lib/utils";
@@ -94,6 +94,7 @@ const Index = () => {
 
           {/* Nav desktop (anclas) */}
           <nav className="hidden md:flex items-center gap-1" aria-label="Principal">
+            <a href="/sismos" className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"><svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12h4l3-9 4 18 3-9h4"/></svg>Sismos</a>
             {navItems.map(({ id, label }) => (
               <a
                 key={id}
@@ -149,7 +150,7 @@ const Index = () => {
             {/* 1. Estado actual */}
             <DashboardHero reading={latestReading} />
 
-            {/* 2. Gráficos protagonistas */}
+            {/* 2. GrÃ¡ficos protagonistas */}
             <section
               id="graficos"
               aria-label={t.dashboard.activityChartTitle}
@@ -165,14 +166,14 @@ const Index = () => {
               </Reveal>
             </section>
 
-            {/* 3. Informe del día */}
+            {/* 3. Informe del dÃ­a */}
             <div className="container mx-auto px-4 py-8 max-w-5xl">
               <Reveal>
                 <DailyReport reading={latestReading} />
               </Reveal>
             </div>
 
-            {/* 4. Histórico */}
+            {/* 4. HistÃ³rico */}
             <section
               id="historico"
               aria-label={t.dashboard.historyTitle}
@@ -223,7 +224,7 @@ const Index = () => {
         )}
       </main>
 
-      {/* Nav móvil inferior (anclas) */}
+      {/* Nav mÃ³vil inferior (anclas) */}
       <nav
         className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-card/90 backdrop-blur-xl safe-area-inset-bottom"
         aria-label="Principal"
@@ -251,3 +252,7 @@ const Index = () => {
 };
 
 export default Index;
+
+
+
+
