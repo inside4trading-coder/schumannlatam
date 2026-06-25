@@ -11,6 +11,7 @@ import NotFound from "./pages/NotFound";
 
 const AdminNewsletter = lazy(() => import("./pages/AdminNewsletter"));
 const SolarActivity = lazy(() => import("./pages/SolarActivity"));
+const Sismos = lazy(() => import("./pages/Sismos"));
 
 const queryClient = new QueryClient();
 
@@ -27,6 +28,7 @@ const App = () => (
                 <Route path="/" element={<Index />} />
                 <Route path="/admin/newsletter" element={<AdminNewsletter />} />
                 <Route path="/solar-activity" element={<SolarActivity />} />
+                <Route path="/sismos" element={<Sismos />} />
                 <Route path="*" element={<NotFound />} />
               </Routes>
             </Suspense>
