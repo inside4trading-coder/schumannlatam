@@ -1,4 +1,5 @@
 ﻿import { lazy, Suspense, useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { useSchumannReadings } from "@/hooks/useSchumannReadings";
 import { DashboardHero } from "@/components/dashboard/DashboardHero";
 import { SpectrogramCard } from "@/components/dashboard/SpectrogramCard";
@@ -229,7 +230,7 @@ const Index = () => {
         className="md:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border/50 bg-card/90 backdrop-blur-xl safe-area-inset-bottom"
         aria-label="Principal"
       >
-        <div className="grid grid-cols-4 px-1 py-1.5">
+        <div className="grid grid-cols-5 px-1 py-1.5">
           {navItems.map(({ id, label, icon: Icon }) => (
             <a
               key={id}
@@ -245,6 +246,15 @@ const Index = () => {
               </span>
             </a>
           ))}
+          <Link
+            to="/sismos"
+            className="flex flex-col items-center justify-start gap-0.5 px-1 py-1.5 rounded-lg transition-colors text-muted-foreground hover:text-primary"
+          >
+            <Waves className="h-5 w-5 flex-shrink-0" />
+            <span className="text-[10px] font-medium leading-tight text-center">
+              Sismos
+            </span>
+          </Link>
         </div>
       </nav>
     </div>
