@@ -109,7 +109,10 @@ export function EarthquakeGlobe({ events, selected, onSelect, cutoff = null }: P
     renderer.setSize(W, H);
     renderer.domElement.style.display = "block";
     renderer.domElement.style.cursor = "grab";
+    renderer.domElement.style.touchAction = "none"; // prevent browser scroll capture on touch
     mount.appendChild(renderer.domElement);
+
+    const isTouch = navigator.maxTouchPoints > 0;
 
     const earth = new THREE.Group();
     scene.add(earth);
@@ -241,7 +244,7 @@ export function EarthquakeGlobe({ events, selected, onSelect, cutoff = null }: P
         glow.scale.set(baseGlow, baseGlow, 1);
         glow.position.copy(pos);
 
-        const hitGeo = new THREE.SphereGeometry(0.05, 8, 8);
+        const hitGeo = new THREE.SphereGeometry(isTouch ? 0.08 : 0.05, 8, 8);
         // colorWrite/depthWrite off → invisible but still raycastable.
         // (visible:false would make Raycaster skip the mesh entirely.)
         const hitMat = new THREE.MeshBasicMaterial({ colorWrite: false, depthWrite: false });
@@ -362,6 +365,7 @@ export function EarthquakeGlobe({ events, selected, onSelect, cutoff = null }: P
         target.y = earth.rotation.y;
         return;
       }
+      if (isTouch) return; // no hover tooltip on touch — tap-to-select handles it
       const m = pick(e.clientX, e.clientY);
       renderer.domElement.style.cursor = m ? "pointer" : "grab";
       if (m) showTip(m, e.clientX, e.clientY);
@@ -476,7 +480,7 @@ export function EarthquakeGlobe({ events, selected, onSelect, cutoff = null }: P
     <div className="relative w-full">
       <div
         ref={mountRef}
-        className="w-full h-[420px] sm:h-[480px] rounded-2xl overflow-hidden border border-border/50"
+        className="w-full h-[260px] sm:h-[420px] rounded-2xl overflow-hidden border border-border/50"
         style={{ background: "radial-gradient(ellipse at 50% 42%, hsl(245 40% 12%) 0%, hsl(240 20% 5%) 70%)" }}
       />
 
@@ -512,9 +516,9 @@ export function EarthquakeGlobe({ events, selected, onSelect, cutoff = null }: P
       <div className="absolute bottom-3 left-3 flex flex-wrap gap-1.5">
         {([["M2+", "#818cf8"], ["M4+", "#a78bfa"], ["M5+", "#facc15"], ["M6+", "#fb923c"], ["M7+", "#f87171"]] as [string, string][]).map(
           ([label, color]) => (
-            <div key={label} className="flex items-center gap-1.5 rounded-full border border-border/40 bg-black/55 px-2.5 py-1 backdrop-blur-sm">
+            <div key={label} className="flex items-center gap-1 sm:gap-1.5 rounded-full border border-border/40 bg-black/55 px-1.5 sm:px-2.5 py-1 backdrop-blur-sm">
               <span className="h-2 w-2 flex-shrink-0 rounded-full" style={{ background: color }} />
-              <span className="text-[10px] font-medium text-white/80" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{label}</span>
+              <span className="hidden sm:inline text-[10px] font-medium text-white/80" style={{ fontFamily: "'Space Grotesk', sans-serif" }}>{label}</span>
             </div>
           ),
         )}

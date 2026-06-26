@@ -7,7 +7,6 @@ import { EarthquakeList } from "@/components/seismic/EarthquakeList";
 import { EarthquakeDetail } from "@/components/seismic/EarthquakeDetail";
 import { SeismicStats } from "@/components/seismic/SeismicStats";
 import { AftershockForecast } from "@/components/seismic/AftershockForecast";
-import { FeltReport } from "@/components/seismic/FeltReport";
 import { SeismicReplay } from "@/components/seismic/SeismicReplay";
 import { SeismicHistoryChart } from "@/components/seismic/SeismicHistoryChart";
 import { Button } from "@/components/ui/button";
@@ -34,8 +33,6 @@ const REGION_FILTERS: { label: string; value: RegionFilter; flag?: string }[] = 
   { label: "Global", value: "all", flag: "🌍" },
 ];
 
-const RECENT_STRONG_MS = 72 * 3600 * 1000;
-
 const Sismos = () => {
   const { language } = useLanguage();
   const isEs = language === "es";
@@ -43,7 +40,7 @@ const Sismos = () => {
   const [regionFilter, setRegionFilter] = useState<RegionFilter>("latam");
   const [selected, setSelected] = useState<Earthquake | null>(null);
   const [tab, setTab] = useState<"live" | "history">("live");
-  const [view3d, setView3d] = useState(true);
+  const [view3d, setView3d] = useState(() => typeof window !== "undefined" ? window.innerWidth >= 768 : true);
   const [cutoff, setCutoff] = useState<number | null>(null);
   const { events, total, loading, error, lastUpdated, refetch } = useEarthquakes(magFilter, regionFilter);
 
@@ -66,14 +63,6 @@ const Sismos = () => {
     () => (cutoff == null ? events : events.filter((e) => e.time <= cutoff)),
     [events, cutoff],
   );
-
-  // Most significant recent quake drives the "¿Lo sentiste?" prompt.
-  const recentStrong = useMemo(() => {
-    const now = Date.now();
-    const cand = events.filter((e) => now - e.time < RECENT_STRONG_MS && e.mag >= 3.5);
-    if (!cand.length) return null;
-    return cand.reduce((a, b) => (b.mag > a.mag ? b : a));
-  }, [events]);
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
@@ -223,19 +212,9 @@ const Sismos = () => {
               </div>
             )}
 
-            {/* Réplicas + ¿Lo sentiste? */}
-            <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-2">
-              <AftershockForecast events={events} isEs={isEs} />
-              {recentStrong ? (
-                <FeltReport quake={recentStrong} isEs={isEs} />
-              ) : (
-                <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-border/40 p-6 text-center text-muted-foreground">
-                  <Waves className="mb-2 h-7 w-7 opacity-20" />
-                  <p className="text-sm font-display">
-                    {isEs ? "Sin sismos recientes para reportar en la región" : "No recent quakes to report in the region"}
-                  </p>
-                </div>
-              )}
+            {/* Pronóstico de réplicas */}
+            <div className="mb-6">
+              <AftershockForecast events={events} isEs={isEs} region={regionFilter} />
             </div>
 
             {/* Toggle 2D / 3D */}
