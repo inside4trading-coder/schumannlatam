@@ -19,8 +19,8 @@ export interface Earthquake {
 export type MagFilter = "all" | "2+" | "4+" | "6+";
 export type RegionFilter = "latam" | "venezuela" | "all";
 
-const LATAM_BOUNDS = { minLat: -60, maxLat: 35, minLng: -120, maxLng: -30 };
-const VEN_BOUNDS = { minLat: 0.6, maxLat: 15.9, minLng: -73.4, maxLng: -59.8 };
+export const LATAM_BOUNDS = { minLat: -60, maxLat: 35, minLng: -120, maxLng: -30 };
+export const VEN_BOUNDS = { minLat: 0.6, maxLat: 15.9, minLng: -73.4, maxLng: -59.8 };
 
 const FEED_URL = "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/2.5_day.geojson";
 
