@@ -59,6 +59,8 @@ ciudadana.
   1200×630, canonical y sitemap consistentes con el dominio de producción
 
 ## Arquitectura
+
+```
 src/
 ├── pages/
 │   ├── Index.tsx              # Dashboard principal de resonancia Schumann
@@ -105,16 +107,18 @@ src/
 
 supabase/
 └── migrations/                  # RLS anónima para feltReports
-
+```
 
 ## Stack técnico
-Frontend React + TypeScript + Vite
-3D Three.js
-Gráficos Recharts
-Animación Framer Motion
-Backend/DB Supabase (Postgres + RLS)
-Deploy Vercel
 
+```
+Frontend    React + TypeScript + Vite
+3D          Three.js
+Gráficos    Recharts
+Animación   Framer Motion
+Backend/DB  Supabase (Postgres + RLS)
+Deploy      Vercel
+```
 
 ## Desarrollo local
 
