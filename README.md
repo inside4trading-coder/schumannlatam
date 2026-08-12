@@ -137,6 +137,6 @@ npm run dev
 - [x] Histórico largo (>30 días) vía proxy edge function
 - [ ] Notificaciones push ante detección de enjambre sísmico
 
-## Licencia
 
-MIT
+
+
