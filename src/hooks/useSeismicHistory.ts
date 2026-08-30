@@ -52,8 +52,14 @@ async function load(region: RegionFilter, days: number): Promise<SeismicHistory>
   const cutoff = Date.now() - days * 86_400_000;
   const bounds = region === "venezuela" ? VEN_BOUNDS : region === "latam" ? LATAM_BOUNDS : null;
 
-  const events: HistEvent[] = (data.features ?? [])
-    .map((f: any) => {
+  interface UsgsHistFeature {
+    id: string;
+    properties: { mag: number | null; place: string | null; time: number };
+    geometry: { coordinates: [number, number, number] };
+  }
+
+  const events: HistEvent[] = ((data.features ?? []) as UsgsHistFeature[])
+    .map((f) => {
       const [lng, lat, depth] = f.geometry.coordinates;
       return {
         id: f.id,

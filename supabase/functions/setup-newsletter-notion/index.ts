@@ -1,15 +1,15 @@
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+import { corsHeaders, requireAdmin } from "../_shared/admin.ts";
 
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+  // One-time provisioning that writes to the Notion workspace — admin only.
+  const unauthorized = requireAdmin(req);
+  if (unauthorized) return unauthorized;
 
   try {
     const notionToken = Deno.env.get('NOTION_TOKEN');

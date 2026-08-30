@@ -3,13 +3,17 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.86.0";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-cron-secret',
 };
 
 interface NotionPage {
   id: string;
   properties: { [key: string]: any };
 }
+
+// Notion database that holds the hourly Schumann readings. Override with an env
+// var; falls back to the original database id for backwards compatibility.
+const READINGS_DB_ID = Deno.env.get('NOTION_READINGS_DB_ID') || '2bb88e97a96880c08324c9903ee749f0';
 
 const extractText = (richText: any[]): string => {
   if (!richText || !Array.isArray(richText)) return '';
@@ -35,6 +39,17 @@ const numberToActivityLevel = (avg: number): string => {
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
+  }
+
+  // Optional shared-secret guard. When CRON_SECRET is set, callers (the pg_cron
+  // job) must send it in the `x-cron-secret` header. Leaving it unset keeps the
+  // previous behaviour so nothing breaks before the cron job is updated.
+  const cronSecret = Deno.env.get('CRON_SECRET');
+  if (cronSecret && req.headers.get('x-cron-secret') !== cronSecret) {
+    return new Response(JSON.stringify({ error: 'Unauthorized' }), {
+      status: 401,
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+    });
   }
 
   try {
@@ -63,7 +78,7 @@ serve(async (req) => {
       if (startCursor) requestBody.start_cursor = startCursor;
 
       const response = await fetch(
-        'https://api.notion.com/v1/databases/2bb88e97a96880c08324c9903ee749f0/query',
+        `https://api.notion.com/v1/databases/${READINGS_DB_ID}/query`,
         {
           method: 'POST',
           headers: {
