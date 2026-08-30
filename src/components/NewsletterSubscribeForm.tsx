@@ -21,6 +21,7 @@ type SubscriptionFormData = z.infer<typeof subscriptionSchema>;
 export const NewsletterSubscribeForm = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubscribed, setIsSubscribed] = useState(false);
+  const [honeypot, setHoneypot] = useState("");
   const { toast } = useToast();
   const { language } = useLanguage();
 
@@ -36,7 +37,7 @@ export const NewsletterSubscribeForm = () => {
     setIsSubmitting(true);
     try {
       const { data: response, error } = await supabase.functions.invoke("newsletter-subscribe", {
-        body: { email: data.email, name: data.name || "" },
+        body: { email: data.email, name: data.name || "", website: honeypot },
       });
 
       if (error) throw error;
@@ -97,6 +98,17 @@ export const NewsletterSubscribeForm = () => {
       <CardContent>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-3">
+            {/* Honeypot: hidden from users, bots fill it. */}
+            <input
+              type="text"
+              name="website"
+              tabIndex={-1}
+              autoComplete="off"
+              aria-hidden="true"
+              value={honeypot}
+              onChange={(e) => setHoneypot(e.target.value)}
+              style={{ position: "absolute", left: "-9999px", width: 1, height: 1, opacity: 0 }}
+            />
             <FormField
               control={form.control}
               name="name"

@@ -86,7 +86,23 @@ function inBounds(lat: number, lng: number, b: typeof LATAM_BOUNDS) {
   return lat >= b.minLat && lat <= b.maxLat && lng >= b.minLng && lng <= b.maxLng;
 }
 
-function parseFeature(f: any): Earthquake {
+interface UsgsFeature {
+  id: string;
+  properties: {
+    mag: number | null;
+    place: string | null;
+    time: number;
+    felt: number | null;
+    alert: string | null;
+    sig: number | null;
+    url: string;
+    status: string;
+    tsunami: number | null;
+  };
+  geometry: { coordinates: [number, number, number] };
+}
+
+function parseFeature(f: UsgsFeature): Earthquake {
   const p = f.properties;
   const [lng, lat, depth] = f.geometry.coordinates;
   return {
@@ -117,12 +133,12 @@ export function useEarthquakes(magFilter: MagFilter = "all", regionFilter: Regio
       const res = await fetch(FEED_URL);
       if (!res.ok) throw new Error("Error al conectar con USGS");
       const data = await res.json();
-      const parsed: Earthquake[] = data.features.map(parseFeature);
+      const parsed: Earthquake[] = (data.features as UsgsFeature[]).map(parseFeature);
       setEvents(parsed);
       setLastUpdated(new Date());
       setError(null);
-    } catch (e: any) {
-      setError(e.message ?? "Error desconocido");
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Error desconocido");
     } finally {
       setLoading(false);
     }
@@ -130,8 +146,35 @@ export function useEarthquakes(magFilter: MagFilter = "all", regionFilter: Regio
 
   useEffect(() => {
     fetch_();
-    intervalRef.current = setInterval(fetch_, 60_000);
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
+
+    const startPolling = () => {
+      if (intervalRef.current) return;
+      intervalRef.current = setInterval(fetch_, 60_000);
+    };
+    const stopPolling = () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+        intervalRef.current = null;
+      }
+    };
+
+    // Only poll while the tab is visible.
+    const onVisibility = () => {
+      if (document.visibilityState === "visible") {
+        fetch_();
+        startPolling();
+      } else {
+        stopPolling();
+      }
+    };
+
+    if (document.visibilityState === "visible") startPolling();
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      stopPolling();
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
   }, [fetch_]);
 
   const filtered = events.filter((e) => {

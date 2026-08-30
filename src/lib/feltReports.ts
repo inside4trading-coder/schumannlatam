@@ -16,6 +16,7 @@ export interface FeltSummary {
 // `felt_reports` is not part of the auto-generated Database types yet, so we
 // access it through an untyped handle. All calls degrade gracefully when
 // Supabase is not configured (e.g. missing env vars or table not migrated).
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const table = () => (supabase as unknown as { from: (t: string) => any }).from("felt_reports");
 
 export async function submitFeltReport(input: FeltReportInput): Promise<boolean> {

@@ -1,9 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
-
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
-};
+import { corsHeaders, requireAdmin } from "../_shared/admin.ts";
 
 const RESEND_API_KEY = Deno.env.get("RESEND_API_KEY");
 const NOTION_TOKEN = Deno.env.get("NOTION_TOKEN");
@@ -25,6 +21,10 @@ serve(async (req: Request): Promise<Response> => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
+
+  // Sending mail on behalf of the project — admin only.
+  const unauthorized = requireAdmin(req);
+  if (unauthorized) return unauthorized;
 
   try {
     if (!NOTION_TOKEN || !SUBSCRIBERS_DB_ID) {

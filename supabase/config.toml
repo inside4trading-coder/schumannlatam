@@ -1,16 +1,22 @@
 project_id = "oxsbzoezvvyjgeitxdyh"
 
+# Privileged functions: require a valid Supabase JWT (the browser client always
+# sends one) AND an ADMIN_TOKEN header checked in code (see _shared/admin.ts).
 [functions.setup-newsletter-notion]
-verify_jwt = false
-
-[functions.newsletter-subscribe]
-verify_jwt = false
+verify_jwt = true
 
 [functions.newsletter-send]
-verify_jwt = false
+verify_jwt = true
 
 [functions.newsletter-subscribers]
-verify_jwt = false
+verify_jwt = true
 
+# Public subscribe form: browser client sends the anon JWT; honeypot + validation
+# in code guard against bots.
+[functions.newsletter-subscribe]
+verify_jwt = true
+
+# Called by pg_cron via pg_net. Keep verify_jwt = false but protect with a
+# CRON_SECRET header check before enabling any external exposure.
 [functions.sync-notion-readings]
 verify_jwt = false

@@ -2,7 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap');
+/* Fonts are loaded via <link> in index.html so they don't block the CSS
+   pipeline and don't trigger the "@import must precede all statements" warning. */
 
 @layer base {
   :root {

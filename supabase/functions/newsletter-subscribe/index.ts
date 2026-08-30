@@ -16,6 +16,8 @@ const SUBSCRIBERS_DB_ID = cleanId.length === 32
 interface SubscribeRequest {
   email: string;
   name?: string;
+  // Honeypot: real users never fill this hidden field. Bots usually do.
+  website?: string;
 }
 
 serve(async (req: Request): Promise<Response> => {
@@ -30,9 +32,18 @@ serve(async (req: Request): Promise<Response> => {
       throw new Error("Newsletter configuration error");
     }
 
-    const { email, name }: SubscribeRequest = await req.json();
+    const { email, name, website }: SubscribeRequest = await req.json();
 
-    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    // Honeypot tripped: pretend success, do nothing.
+    if (website && website.trim() !== "") {
+      console.log("Honeypot triggered, ignoring bot submission");
+      return new Response(
+        JSON.stringify({ success: true, message: "Subscribed successfully" }),
+        { status: 200, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    if (!email || email.length > 320 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return new Response(
         JSON.stringify({ error: "Invalid email address" }),
         { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }

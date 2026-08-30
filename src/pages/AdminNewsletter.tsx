@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +20,46 @@ interface Subscriber {
   subscriptionDate: string;
 }
 
+const TOKEN_KEY = "admin-token";
+
+/**
+ * Gate that asks for the ADMIN_TOKEN before rendering the panel. The token is
+ * kept only in sessionStorage (cleared when the tab closes) and sent as the
+ * `x-admin-token` header on every privileged edge-function call. This is a
+ * shared-secret gate, not real auth — migrate to Supabase Auth + RLS when
+ * there is more than one admin.
+ */
+const AdminGate = ({ onAuthed }: { onAuthed: (token: string) => void }) => {
+  const [value, setValue] = useState("");
+  return (
+    <div className="min-h-screen bg-background flex items-center justify-center px-4">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (value.trim()) onAuthed(value.trim());
+        }}
+        className="w-full max-w-sm space-y-4"
+      >
+        <div>
+          <h1 className="text-xl font-bold">Panel de administración</h1>
+          <p className="text-sm text-muted-foreground">Introduce el token de acceso.</p>
+        </div>
+        <Input
+          type="password"
+          autoFocus
+          autoComplete="current-password"
+          placeholder="Admin token"
+          value={value}
+          onChange={(e) => setValue(e.target.value)}
+        />
+        <Button type="submit" className="w-full" disabled={!value.trim()}>
+          Entrar
+        </Button>
+      </form>
+    </div>
+  );
+};
+
 const AdminNewsletter = () => {
   useSeo({
     title: "Admin Newsletter — Resonancia Schumann",
@@ -27,6 +67,7 @@ const AdminNewsletter = () => {
     canonical: "https://schumannlatam.vercel.app/admin/newsletter",
     noindex: true,
   });
+  const [token, setToken] = useState<string | null>(() => sessionStorage.getItem(TOKEN_KEY));
   const [subscribers, setSubscribers] = useState<Subscriber[]>([]);
   const [loading, setLoading] = useState(true);
   const [sending, setSending] = useState(false);
@@ -36,16 +77,34 @@ const AdminNewsletter = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
 
-  const fetchSubscribers = async () => {
+  const authHeaders = token ? { "x-admin-token": token } : undefined;
+
+  const clearToken = useCallback(() => {
+    sessionStorage.removeItem(TOKEN_KEY);
+    setToken(null);
+  }, []);
+
+  const fetchSubscribers = useCallback(async () => {
+    if (!token) return;
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke("newsletter-subscribers");
-      
-      if (error) throw error;
-      
+      const { data, error } = await supabase.functions.invoke("newsletter-subscribers", {
+        headers: { "x-admin-token": token },
+      });
+
+      if (error) {
+        // supabase-js surfaces non-2xx as FunctionsHttpError
+        if ((error as { context?: { status?: number } }).context?.status === 401) {
+          clearToken();
+          toast({ variant: "destructive", title: "Token inválido", description: "Vuelve a iniciar sesión." });
+          return;
+        }
+        throw error;
+      }
+
       setSubscribers(data.subscribers || []);
       setStats({ total: data.total || 0, active: data.active || 0 });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error fetching subscribers:", error);
       toast({
         variant: "destructive",
@@ -55,11 +114,22 @@ const AdminNewsletter = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token, clearToken, toast]);
 
   useEffect(() => {
     fetchSubscribers();
-  }, []);
+  }, [fetchSubscribers]);
+
+  if (!token) {
+    return (
+      <AdminGate
+        onAuthed={(t) => {
+          sessionStorage.setItem(TOKEN_KEY, t);
+          setToken(t);
+        }}
+      />
+    );
+  }
 
   const handleSendNewsletter = async () => {
     if (!subject.trim() || !content.trim()) {
@@ -101,9 +171,17 @@ const AdminNewsletter = () => {
 
       const { data, error } = await supabase.functions.invoke("newsletter-send", {
         body: { subject, htmlContent, textContent: content },
+        headers: authHeaders,
       });
 
-      if (error) throw error;
+      if (error) {
+        if ((error as { context?: { status?: number } }).context?.status === 401) {
+          clearToken();
+          toast({ variant: "destructive", title: "Token inválido", description: "Vuelve a iniciar sesión." });
+          return;
+        }
+        throw error;
+      }
 
       toast({
         title: "¡Newsletter enviado!",
@@ -112,12 +190,12 @@ const AdminNewsletter = () => {
 
       setSubject("");
       setContent("");
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error sending newsletter:", error);
       toast({
         variant: "destructive",
         title: "Error al enviar",
-        description: error.message || "No se pudo enviar el newsletter.",
+        description: error instanceof Error ? error.message : "No se pudo enviar el newsletter.",
       });
     } finally {
       setSending(false);
@@ -136,6 +214,9 @@ const AdminNewsletter = () => {
               <h1 className="text-2xl font-bold">Admin Newsletter</h1>
               <p className="text-sm text-muted-foreground">Gestiona suscriptores y envía newsletters</p>
             </div>
+            <Button variant="ghost" size="sm" className="ml-auto" onClick={clearToken}>
+              Salir
+            </Button>
           </div>
         </div>
       </header>
