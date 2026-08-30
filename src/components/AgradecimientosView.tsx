@@ -26,8 +26,9 @@ export const AgradecimientosView = () => {
               <div className="relative w-full" style={{ paddingBottom: "56.25%" }}>
                 <iframe
                   className="absolute top-0 left-0 w-full h-full rounded-lg"
-                  src="https://www.youtube.com/embed/XpdpW0z9xnQ?si=ZkF3GgNfCJEp87iC"
-                  title="YouTube video player"
+                  src="https://www.youtube-nocookie.com/embed/XpdpW0z9xnQ"
+                  title={t.acknowledgements.creators.title}
+                  loading="lazy"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                   referrerPolicy="strict-origin-when-cross-origin"
